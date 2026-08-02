@@ -7,7 +7,7 @@ import {
 
 import FooterTop from "./FooterTop";
 import FooterLinks from "./FooterLink";
-import Newsletter from "./Newsletter";
+// import Newsletter from "./Newsletter";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -17,7 +17,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-16 lg:px-8">
 
         {/* Newsletter */}
-        <Newsletter />
+        {/* <Newsletter /> */}
 
         {/* Top Section */}
         <div className="mt-16">

@@ -1,8 +1,8 @@
-import Navbar from "@/components/Navbar/Navbar";
-import Hero from "@/components/hero/Hero";
-import FlashDeals from "@/components/FlashDeals/FlashDeals";
-import FeaturedCategories from "@/components/Category/Category";
-import FeaturedProducts from "@/components/FeaturedProducts/FeaturedProducts";
+import Navbar from "@/components/Navbar/Navbar.jsx";
+import Hero from "@/components/hero/Hero.jsx";
+import FlashDeals from "@/components/FlashDeals/FlashDeals.jsx";
+import FeaturedCategories from "@/components/Category/Category.jsx";
+import FeaturedProducts from "@/components/FeaturedProducts/FeaturedProducts.jsx";
 import Footer from "@/components/Footer/Footer";
 
 const Home = () => {

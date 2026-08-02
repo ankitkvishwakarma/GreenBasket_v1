@@ -6,7 +6,7 @@ import {
   createCategoryAPI,
   updateCategoryAPI,
   deleteCategoryAPI,
-} from "./AdmincategoryService";
+} from "./AdmincategoryService.js";
 
 // ==============================
 // Get All Categories
