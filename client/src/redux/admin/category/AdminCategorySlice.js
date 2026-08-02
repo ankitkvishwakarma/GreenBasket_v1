@@ -6,7 +6,7 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
-} from "./AdminCategoryThunk.js";
+} from "./AdminCategoryThunk";
 
 const initialState = {
   categories: [],
