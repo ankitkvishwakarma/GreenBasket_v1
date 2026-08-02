@@ -6,7 +6,7 @@ import {
   createCategoryAPI,
   updateCategoryAPI,
   deleteCategoryAPI,
-<<<<<<< HEAD
+
 } from "./AdminCategoryService.js";
 
 

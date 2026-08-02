@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api = axios.create({
+const axios = axios.create({
   baseURL:
     import.meta.env.VITE_API_URL ||
     "http://localhost:5000/api",
@@ -10,9 +10,9 @@ const api = axios.create({
   },
 });
 
-// ================= Request =================
+// ================= Request Interceptor =================
 
-api.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
 
@@ -25,9 +25,9 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ================= Response =================
+// ================= Response Interceptor =================
 
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
 
   (error) => {
@@ -35,13 +35,10 @@ api.interceptors.response.use(
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
-
-      // Future
-      // window.location.href = "/login";
     }
 
     return Promise.reject(error);
   }
 );
 
-export default api;
+export default axios;

@@ -1,50 +1,28 @@
-import api from "./axios";
+import axiosInstance from "@/services/axios";
 
-const authService = {
-  // ================= Register =================
-  register: async (userData) => {
-    const { data } = await api.post("/auth/register", userData);
-    return data;
-  },
+// ================= Login =================
 
-  // ================= Login =================
-  login: async (credentials) => {
-    const { data } = await api.post("/auth/login", credentials);
-    return data;
-  },
+export const loginAdmin = async (credentials) => {
+  const { data } = await axiosInstance.post(
+    "/auth/login",
+    credentials
+  );
 
-  // ================= Logout =================
-  logout: async () => {
-    const { data } = await api.post("/auth/logout");
-    return data;
-  },
-
-  // ================= Forgot Password =================
-  forgotPassword: async (email) => {
-    const { data } = await api.post("/auth/forgot-password", {
-      email,
-    });
-
-    return data;
-  },
-
-  // ================= Reset Password =================
-  resetPassword: async (token, password) => {
-    const { data } = await api.post(
-      `/auth/reset-password/${token}`,
-      {
-        password,
-      }
-    );
-
-    return data;
-  },
-
-  // ================= Get Logged In User =================
-  getProfile: async () => {
-    const { data } = await api.get("/auth/profile");
-    return data;
-  },
+  return data;
 };
 
-export default authService;
+// ================= Logout =================
+
+export const logoutAdmin = async () => {
+  const { data } = await axiosInstance.post("/auth/logout");
+
+  return data;
+};
+
+// ================= Profile =================
+
+export const getProfile = async () => {
+  const { data } = await axiosInstance.get("/auth/me");
+
+  return data;
+};
