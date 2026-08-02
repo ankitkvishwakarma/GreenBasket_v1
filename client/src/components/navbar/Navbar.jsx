@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import Logo from "./Logo";
+// import Logo from "./Logo";
 import LocationSelector from "./LocationSelector";
 import SearchBar from "./SearchBar";
 import NavLinks from "./NavLinks";
