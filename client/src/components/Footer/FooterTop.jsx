@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-import Logo from "@/components/Navbar/Logo";
+import Logo from "@/components/navbar/Logo";
 import SocialLinks from "./SocialLink";
 
 const FooterTop = ({
