@@ -2,35 +2,38 @@ import api from "@/services/axios";
 
 const PRODUCT_URL = "/products";
 
-// ==============================
-// Get All Products
-// ==============================
+/* =====================================================
+   GET ALL PRODUCTS
+===================================================== */
+
 export const getProductsAPI = async (params = {}) => {
-  const response = await api.get(PRODUCT_URL, {
+  const { data } = await api.get(PRODUCT_URL, {
     params,
   });
 
-  return response.data;
+  return data;
 };
 
-// ==============================
-// Get Product By ID
-// ==============================
+/* =====================================================
+   GET PRODUCT BY ID
+===================================================== */
+
 export const getProductByIdAPI = async (id) => {
-  const response = await api.get(
-    `${PRODUCT_URL}/${id}`
+  const { data } = await api.get(
+    `${PRODUCT_URL}/id/${id}`
   );
 
-  return response.data;
+  return data;
 };
 
-// ==============================
-// Create Product
-// ==============================
+/* =====================================================
+   CREATE PRODUCT
+===================================================== */
+
 export const createProductAPI = async (
   productData
 ) => {
-  const response = await api.post(
+  const { data } = await api.post(
     PRODUCT_URL,
     productData,
     {
@@ -41,17 +44,18 @@ export const createProductAPI = async (
     }
   );
 
-  return response.data;
+  return data;
 };
 
-// ==============================
-// Update Product
-// ==============================
+/* =====================================================
+   UPDATE PRODUCT
+===================================================== */
+
 export const updateProductAPI = async ({
   id,
   productData,
 }) => {
-  const response = await api.put(
+  const { data } = await api.put(
     `${PRODUCT_URL}/${id}`,
     productData,
     {
@@ -62,90 +66,96 @@ export const updateProductAPI = async ({
     }
   );
 
-  return response.data;
+  return data;
 };
 
-// ==============================
-// Delete Product
-// ==============================
+/* =====================================================
+   DELETE PRODUCT
+===================================================== */
+
 export const deleteProductAPI = async (
   id
 ) => {
-  const response = await api.delete(
+  const { data } = await api.delete(
     `${PRODUCT_URL}/${id}`
   );
 
-  return response.data;
+  return data;
 };
+/* =====================================================
+   LOW STOCK PRODUCTS
+===================================================== */
 
-// ==============================
-// Low Stock Products
-// ==============================
 export const getLowStockProductsAPI =
   async () => {
-    const response = await api.get(
+    const { data } = await api.get(
       `${PRODUCT_URL}/low-stock`
     );
 
-    return response.data;
+    return data;
   };
 
-// ==============================
-// Featured Products
-// ==============================
+/* =====================================================
+   FEATURED PRODUCTS
+===================================================== */
+
 export const getFeaturedProductsAPI =
   async () => {
-    const response = await api.get(
+    const { data } = await api.get(
       `${PRODUCT_URL}/featured`
     );
 
-    return response.data;
+    return data;
   };
 
-// ==============================
-// Latest Products
-// ==============================
+/* =====================================================
+   LATEST PRODUCTS
+===================================================== */
+
 export const getLatestProductsAPI =
   async () => {
-    const response = await api.get(
+    const { data } = await api.get(
       `${PRODUCT_URL}/latest`
     );
 
-    return response.data;
+    return data;
   };
 
-// ==============================
-// Best Seller Products
-// ==============================
+/* =====================================================
+   BEST SELLER PRODUCTS
+===================================================== */
+
 export const getBestSellerProductsAPI =
   async () => {
-    const response = await api.get(
+    const { data } = await api.get(
       `${PRODUCT_URL}/best-sellers`
     );
 
-    return response.data;
+    return data;
   };
 
-// ==============================
-// Related Products
-// ==============================
+/* =====================================================
+   RELATED PRODUCTS
+===================================================== */
+
 export const getRelatedProductsAPI =
   async (id) => {
-    const response = await api.get(
+    const { data } = await api.get(
       `${PRODUCT_URL}/${id}/related`
     );
 
-    return response.data;
+    return data;
   };
 
-// ==============================
-// Product Statistics
-// ==============================
+/* =====================================================
+   PRODUCT STATISTICS
+===================================================== */
+
 export const getProductStatsAPI =
   async () => {
-    const response = await api.get(
+    const { data } = await api.get(
       `${PRODUCT_URL}/stats`
     );
 
-    return response.data;
+    return data;
   };

@@ -9,7 +9,7 @@ import {
 } from "@/redux/admin/product/productThunk";
 
 import {
-  resetProductState,
+  clearProductState,
 } from "@/redux/admin/product/productSlice";
 
 const AddProduct = ({
@@ -18,9 +18,9 @@ const AddProduct = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { loading } = useSelector(
-    (state) => state.product
-  );
+const { loading } = useSelector(
+  (state) => state.adminProduct
+);
 
   if (!open) return null;
 
@@ -38,7 +38,7 @@ const AddProduct = ({
 
         await dispatch(getProducts());
 
-        dispatch(resetProductState());
+        dispatch(clearProductState());
 
         onClose();
       } else {

@@ -9,7 +9,7 @@ import {
 } from "@/redux/admin/product/productThunk";
 
 import {
-  resetProductState,
+  clearProductState,
 } from "@/redux/admin/product/productSlice";
 
 const EditProduct = ({
@@ -20,7 +20,7 @@ const EditProduct = ({
   const dispatch = useDispatch();
 
   const { loading } = useSelector(
-    (state) => state.product
+    (state) => state.adminProduct
   );
 
   if (!open || !product) return null;
@@ -37,18 +37,18 @@ const EditProduct = ({
       if (updateProduct.fulfilled.match(result)) {
         toast.success(
           result.payload?.message ||
-          "Product updated successfully"
+            "Product updated successfully"
         );
 
         await dispatch(getProducts());
 
-        dispatch(resetProductState());
+        dispatch(clearProductState());
 
         onClose();
       } else {
         toast.error(
           result.payload ||
-          "Failed to update product"
+            "Failed to update product"
         );
       }
     } catch (error) {

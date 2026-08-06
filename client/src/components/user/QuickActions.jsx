@@ -11,48 +11,48 @@ import { useNavigate } from "react-router-dom";
 const QuickActions = ({ user }) => {
     const navigate = useNavigate();
 
-    const actions = [
-        {
-            id: 1,
-            title: "Shop Now",
-            subtitle: "Browse Products",
-            icon: ShoppingBag,
-            color: "bg-green-100 text-green-600",
-            path: "/",
-        },
-        {
-            id: 2,
-            title: "My Orders",
-            subtitle: "Track Your Orders",
-            icon: Package,
-            color: "bg-blue-100 text-blue-600",
-            path: "/user/orders",
-        },
-        {
-            id: 3,
-            title: "My Addresses",
-            subtitle: "Manage Addresses",
-            icon: MapPin,
-            color: "bg-orange-100 text-orange-600",
-            path: "/user/addresses",
-        },
-        {
-            id: 4,
-            title: "Coupons",
-            subtitle: "Available Offers",
-            icon: TicketPercent,
-            color: "bg-pink-100 text-pink-600",
-            path: "/user/coupons",
-        },
-        {
-            id: 5,
-            title: "Payments",
-            subtitle: "Payment History",
-            icon: CreditCard,
-            color: "bg-purple-100 text-purple-600",
-            path: "/user/payments",
-        },
-    ];
+   const actions = [
+  {
+    id: 1,
+    title: "Shop Now",
+    subtitle: "Browse Products",
+    icon: ShoppingBag,
+    color: "bg-green-100 text-green-600",
+    path: "/",
+  },
+  {
+    id: 2,
+    title: "My Orders",
+    subtitle: "Track Your Orders",
+    icon: Package,
+    color: "bg-blue-100 text-blue-600",
+    path: "/user/orders",
+  },
+  {
+    id: 3,
+    title: "My Cart",
+    subtitle: "View Cart",
+    icon: ShoppingBag,
+    color: "bg-yellow-100 text-yellow-600",
+    path: "/user/cart",
+  },
+  {
+    id: 4,
+    title: "My Addresses",
+    subtitle: "Manage Addresses",
+    icon: MapPin,
+    color: "bg-orange-100 text-orange-600",
+    path: "/user/address",
+  },
+  {
+    id: 5,
+    title: "Coupons",
+    subtitle: "Available Offers",
+    icon: TicketPercent,
+    color: "bg-pink-100 text-pink-600",
+    path: "/user/coupons",
+  },
+];
 
     return (
         <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">

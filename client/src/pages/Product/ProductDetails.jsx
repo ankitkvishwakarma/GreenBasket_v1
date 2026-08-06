@@ -1,78 +1,190 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { addToCart } from "@/redux/cart/cartThunk.js";
 
-import ProductBreadcrumb from "@/components/Product/ProductBreadcrumb";
-import ProductGallery from "@/components/Product/ProductGallery";
-import ProductInfo from "@/components/Product/ProductInfo";
-import ProductTabs from "@/components/Product/ProductTabs";
-import RelatedProducts from "@/components/Product/RelatedProducts";
+import { useDispatch, useSelector } from "react-redux";
 
-import productService from "@/services/productService";
+import {
+    getProductBySlug,
+    getRelatedProducts,
+    getTrendingProducts,
+} from "@/redux/product/productThunk";
+
+import ProductGallery from "@/components/Product/ProductGallery/ProductGallery";
+
+import ProductInfo from "@/components/Product/ProductInfo/ProductInfo";
+
+import ProductTabs from "@/components/Product/ProductTabs/ProductTabs";
+
+import RelatedProducts from "@/components/Product/Recommendation/RelatedProducts";
+
+import RecommendedProducts from "@/components/Product/Recommendation/RecommendedProducts";
+
+import TrendingProducts from "@/components/Product/Recommendation/TrendingProducts";
+
+import FrequentlyBought from "@/components/Product/Recommendation/FrequentlyBought";
+
+import RecentlyViewed from "@/components/Product/Recommendation/RecentlyViewed";
+
+// import ProductSkeleton from "@/components/Product/ProductSkeleton";
 
 const ProductDetails = () => {
-  const { slug } = useParams();
 
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadProduct();
-  }, [slug]);
+    const { slug } = useParams();
 
-  const loadProduct = async () => {
-    try {
-      setLoading(true);
+    const dispatch = useDispatch();
 
-      const response = await productService.getProductBySlug(slug);
+    const {
 
-      setProduct(response.product || response);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+        product,
+
+        relatedProducts,
+
+        trendingProducts,
+
+        loading,
+
+    } = useSelector(
+        (state) => state.product
+    );
+    console.log("Slug:", slug);
+    console.log("Loading:", loading);
+    console.log("Product:", product);
+    console.log("Related Products:", relatedProducts);
+    console.log("Trending Products:", trendingProducts);
+
+    const [quantity, setQuantity] =
+        useState(1);
+
+    const [
+        selectedVariant,
+        setSelectedVariant,
+    ] = useState(null);
+
+    useEffect(() => {
+
+        if (slug) {
+
+            dispatch(getProductBySlug(slug));
+
+        }
+
+    }, [dispatch, slug]);
+
+    useEffect(() => {
+
+        if (product?._id) {
+
+            dispatch(
+                getRelatedProducts(product._id)
+            );
+
+            dispatch(getTrendingProducts());
+
+        }
+
+    }, [dispatch, product]);
+
+    useEffect(() => {
+    if (
+        product?.variants?.length &&
+        !selectedVariant
+    ) {
+        setSelectedVariant(product.variants[0]);
     }
+}, [product?.variants, selectedVariant]);
+
+   const handleAddToCart = async () => {
+  if (!product?._id) return;
+
+  const cartData = {
+    productId: product._id,
+    quantity,
   };
 
-  if (loading) {
+  console.log("Sending:", cartData);
+
+  const result = await dispatch(addToCart(cartData));
+
+  console.log(result);
+};
+
+    const handleBuyNow = () => {
+
+        console.log("Buy Now");
+
+    };
+
     return (
-      <div className="container mx-auto py-20">
-        Loading...
-      </div>
-    );
-  }
 
-  if (!product) {
-    return (
-      <div className="container mx-auto py-20 text-center">
-        Product not found
-      </div>
-    );
-  }
+        <div className="bg-gray-50">
 
-  return (
-    <main className="bg-gray-50">
-      <div className="container mx-auto px-4 py-10">
+            <div className="mx-auto max-w-7xl space-y-16 px-4 py-10">
 
-        <ProductBreadcrumb product={product} />
+                <div className="grid gap-10 lg:grid-cols-2">
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-2">
+                    <ProductGallery
+                        product={product}
+                    />
 
-          <ProductGallery product={product} />
+                    <ProductInfo
+                        product={product}
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                        selectedVariant={selectedVariant}
+                        setSelectedVariant={
+                            setSelectedVariant
+                        }
+                        onAddToCart={
+                            handleAddToCart
+                        }
+                        onBuyNow={handleBuyNow}
+                    />
 
-          <ProductInfo product={product} />
+                </div>
+
+                <ProductTabs
+                    product={product}
+                />
+
+                <RecommendedProducts
+                    products={
+                        relatedProducts
+                    }
+                />
+
+                <RelatedProducts
+                    products={
+                        relatedProducts
+                    }
+                />
+
+                <TrendingProducts
+                    products={
+                        trendingProducts
+                    }
+                />
+
+                <FrequentlyBought
+                    products={
+                        relatedProducts.slice(
+                            0,
+                            3
+                        )
+                    }
+                />
+
+                <RecentlyViewed
+                    currentProduct={product}
+                />
+
+            </div>
 
         </div>
 
-        <ProductTabs product={product} />
+    );
 
-        <RelatedProducts
-          productId={product._id}
-          category={product.category?._id}
-        />
-
-      </div>
-    </main>
-  );
 };
 
 export default ProductDetails;

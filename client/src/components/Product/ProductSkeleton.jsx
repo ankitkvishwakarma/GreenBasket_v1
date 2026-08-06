@@ -1,56 +1,63 @@
-const ProductSkeleton = ({
-  count = 10,
-  view = "grid",
-}) => {
+import { motion } from "framer-motion";
+
+const ProductSkeleton = () => {
   return (
-    <div
-      className={
-        view === "grid"
-          ? "grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
-          : "flex flex-col gap-6"
-      }
+    <motion.div
+      animate={{
+        opacity: [0.6, 1, 0.6],
+      }}
+      transition={{
+        duration: 1.4,
+        repeat: Infinity,
+      }}
+      className="min-w-[290px] overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
     >
-      {Array.from({ length: count }).map((_, index) => (
-        <div
-          key={index}
-          aria-hidden="true"
-          className={`animate-pulse overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ${
-            view === "list"
-              ? "flex flex-col md:flex-row"
-              : ""
-          }`}
-        >
-          {/* Image */}
-          <div
-            className={`bg-gray-200 ${
-              view === "list"
-                ? "h-64 md:h-auto md:w-72"
-                : "h-64 w-full"
-            }`}
-          />
+      {/* Image */}
 
-          {/* Content */}
-          <div className="flex flex-1 flex-col justify-between p-5">
-            <div>
-              <div className="h-4 w-24 rounded bg-gray-200" />
+      <div className="relative">
 
-              <div className="mt-4 h-5 w-full rounded bg-gray-200" />
+        <div className="aspect-square bg-gray-100" />
 
-              <div className="mt-3 h-5 w-3/4 rounded bg-gray-200" />
+        <div className="absolute left-5 top-5 h-7 w-16 rounded-full bg-gray-200" />
 
-              <div className="mt-5 flex items-center gap-2">
-                <div className="h-4 w-4 rounded-full bg-gray-200" />
-                <div className="h-4 w-20 rounded bg-gray-200" />
-              </div>
+        <div className="absolute right-5 top-5 h-10 w-10 rounded-full bg-gray-200" />
 
-              <div className="mt-6 h-7 w-28 rounded bg-gray-200" />
-            </div>
+      </div>
 
-            <div className="mt-8 h-12 rounded-2xl bg-gray-200" />
-          </div>
+      {/* Content */}
+
+      <div className="space-y-4 p-5">
+
+        <div className="h-3 w-24 rounded bg-gray-200" />
+
+        <div className="h-6 w-full rounded bg-gray-200" />
+
+        <div className="h-6 w-3/4 rounded bg-gray-200" />
+
+        <div className="flex items-center gap-3">
+
+          <div className="h-5 w-14 rounded-full bg-gray-200" />
+
+          <div className="h-5 w-20 rounded-full bg-gray-200" />
+
         </div>
-      ))}
-    </div>
+
+        <div className="h-8 w-32 rounded bg-gray-200" />
+
+        <div className="h-14 rounded-2xl bg-gray-200" />
+
+        <div className="h-14 rounded-2xl bg-gray-200" />
+
+        <div className="flex gap-3">
+
+          <div className="h-12 flex-1 rounded-2xl bg-gray-200" />
+
+          <div className="h-12 w-12 rounded-2xl bg-gray-200" />
+
+        </div>
+
+      </div>
+    </motion.div>
   );
 };
 

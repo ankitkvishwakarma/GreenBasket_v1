@@ -1,7 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
 // ================= Customer Pages =================
+import MainLayout from "@/layouts/MainLayout";
 import Home from "@/pages/Home/Home";
+// import CategoryPage from "@/pages/Category/Category";
+import CategoryProducts from "@/pages/Category/CategoryProducts";
+import ProductDetails from "@/pages/Product/ProductDetails";
 import NotFound from "@/pages/Notfound";
 
 // ================= Authentication =================
@@ -11,15 +15,18 @@ import ForgotPassword from "@/pages/Auth/ForgotPassword";
 import ResetPassword from "@/pages/Auth/ResetPassword";
 
 // ================= User =================
-import UserDashboard from "@/pages/user/Dashboard";
 import UserLayout from "@/layouts/UserLayout";
-
-// Uncomment these when pages are created
+import UserDashboard from "@/pages/user/Dashboard";
 import Profile from "@/pages/user/Profile";
 import Address from "@/pages/user/Address";
-// import Wishlist from "@/pages/user/Wishlist";
-// import Cart from "@/pages/user/Cart";
 import Orders from "@/pages/user/Order";
+import CartPage from "@/pages/Cart/CartPage";
+import CheckoutPage from "@/pages/Checkout/CheckoutPage";
+
+
+// import Cart from "@/pages/Cart/Cart";
+// import Wishlist from "@/pages/Wishlist/Wishlist";
+// import Search from "@/pages/Search/Search";
 
 // ================= Admin =================
 import AdminLogin from "@/admin/pages/Login";
@@ -33,25 +40,45 @@ import Coupons from "@/admin/pages/Coupons";
 import Delivery from "@/admin/pages/Delivery";
 
 // ================= Protected Routes =================
-import ProtectedRoute from "../admin/Routes/ProtectedRoute";
+import ProtectedRoute from "@/admin/Routes/ProtectedRoute";
 import UserProtectedRoute from "@/routes/UserProtectedRoute";
 
 const AppRoutes = () => {
   return (
     <Routes>
 
-      {/* ================= Public ================= */}
+      {/* ================= Customer Layout ================= */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
 
-      <Route path="/" element={<Home />} />
+        <Route
+          path="/product/:slug"
+          element={<ProductDetails />}
+        />
+        <Route
+   path="/category/:slug"
+   element={<CategoryProducts />}
+/>
 
+
+        {/* Uncomment when created */}
+
+        {/* <Route path="/wishlist" element={<Wishlist />} /> */}
+
+        {/* <Route path="/search" element={<Search />} /> */}
+     
+ </Route>
       {/* ================= Authentication ================= */}
 
       <Route path="/login" element={<Login />} />
+
       <Route path="/register" element={<Register />} />
+
       <Route
         path="/forgot-password"
         element={<ForgotPassword />}
       />
+
       <Route
         path="/reset-password/:token"
         element={<ResetPassword />}
@@ -61,6 +88,7 @@ const AppRoutes = () => {
 
       <Route element={<UserProtectedRoute />}>
         <Route path="/user" element={<UserLayout />}>
+
           <Route
             index
             element={<UserDashboard />}
@@ -85,8 +113,15 @@ const AppRoutes = () => {
             path="orders"
             element={<Orders />}
           />
+          <Route path="cart" element={<CartPage />} />
+          <Route
+  path="checkout"
+  element={<CheckoutPage />}
+/>
+
         </Route>
       </Route>
+
       {/* ================= Admin Login ================= */}
 
       <Route
@@ -97,10 +132,12 @@ const AppRoutes = () => {
       {/* ================= Admin ================= */}
 
       <Route element={<ProtectedRoute />}>
+
         <Route
           path="/admin"
           element={<AdminLayout />}
         >
+
           <Route
             index
             element={<AdminDashboard />}
@@ -135,7 +172,9 @@ const AppRoutes = () => {
             path="coupons"
             element={<Coupons />}
           />
+
         </Route>
+
       </Route>
 
       {/* ================= 404 ================= */}

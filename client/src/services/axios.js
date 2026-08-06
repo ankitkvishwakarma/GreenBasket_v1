@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const axios = axios.create({
+const axiosInstance = axios.create({
   baseURL:
     import.meta.env.VITE_API_URL ||
     "http://localhost:5000/api",
@@ -41,4 +41,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axios;
+export default axiosInstance;

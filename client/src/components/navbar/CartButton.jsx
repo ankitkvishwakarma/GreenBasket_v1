@@ -1,299 +1,661 @@
-import { useState } from "react";
-import { ShoppingCart, Minus, Plus } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import {
+  ShoppingCart,
+  Minus,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
+import {
+  motion,
+  AnimatePresence,
+} from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
 
-const demoItems = [
-  {
-    id: 1,
-    name: "Fresh Tomato",
-    price: 120,
-    qty: 2,
-    image: "/images/products/tomato.png",
-  },
-  {
-    id: 2,
-    name: "Red Apple",
-    price: 180,
-    qty: 1,
-    image: "/images/products/apple.png",
-  },
-];
+import {
+  getCart,
+  getCartSummary,
+  updateCartItem,
+  removeCartItem,
+} from "@/redux/cart/cartThunk.js";
 
-const CartButton = ({ count = 3 }) => {
+const CartButton = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const dropdownRef = useRef(null);
+
   const [open, setOpen] = useState(false);
 
-  const subtotal = demoItems.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
+  const {
+    items,
+    totalItems,
+    totalPrice,
+    loading,
+  } = useSelector(
+    (state) => state.cart
   );
 
+  useEffect(() => {
+    dispatch(getCart());
+    dispatch(getCartSummary());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handler
+    );
+
+    return () =>
+      document.removeEventListener(
+        "mousedown",
+        handler
+      );
+  }, []);
+
+  const increaseQty = (item) => {
+    dispatch(
+      updateCartItem({
+        productId: item.product._id,
+        quantity: item.quantity + 1,
+      })
+    ).then(() => dispatch(getCartSummary()));
+  };
+
+  const decreaseQty = (item) => {
+    if (item.quantity <= 1) {
+      dispatch(
+        removeCartItem(item.product._id)
+      ).then(() =>
+        dispatch(getCartSummary())
+      );
+
+      return;
+    }
+
+    dispatch(
+      updateCartItem({
+        productId: item.product._id,
+        quantity: item.quantity - 1,
+      })
+    ).then(() =>
+      dispatch(getCartSummary())
+    );
+  };
+
+  const removeItem = (id) => {
+    dispatch(removeCartItem(id)).then(() =>
+      dispatch(getCartSummary())
+    );
+  };
+
+  const handleViewCart = () => {
+    setOpen(false);
+    navigate("/user/cart");
+  };
+
+  const handleCheckout = () => {
+    setOpen(false);
+    navigate("/user/checkout");
+  };
+
   return (
-    <div className="relative">
+    <div
+      ref={dropdownRef}
+      className="relative"
+    >
 
       {/* Cart Button */}
 
       <motion.button
-        whileHover={{ y: -2, scale: 1.05 }}
+        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        transition={{ duration: 0.2 }}
         onClick={() => setOpen(!open)}
         className="
           relative
           flex
-          h-10
-          w-10
+          h-11
+          w-11
           items-center
           justify-center
           rounded-xl
           border
           border-gray-200
-          bg-white/80
-          backdrop-blur-xl
+          bg-white
           shadow-sm
           transition-all
-          duration-300
           hover:border-green-500
           hover:bg-green-50
-          hover:shadow-lg
-          dark:border-neutral-700
-          dark:bg-neutral-900
-          dark:hover:bg-neutral-800
         "
       >
+
         <ShoppingCart
-          size={18}
-          className="text-gray-700 dark:text-white"
+          size={20}
+          className="text-gray-700"
         />
 
-        <motion.span
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="
-            absolute
-            -right-1
-            -top-1
-            flex
-            h-5
-            min-w-5
-            items-center
-            justify-center
-            rounded-full
-            bg-gradient-to-r
-            from-green-600
-            to-emerald-500
-            px-1
-            text-[10px]
-            font-bold
-            text-white
-            shadow-md
-          "
-        >
-          {count}
-        </motion.span>
+        {totalItems > 0 && (
+          <span
+            className="
+              absolute
+              -right-1
+              -top-1
+              flex
+              h-5
+              min-w-5
+              items-center
+              justify-center
+              rounded-full
+              bg-green-600
+              px-1
+              text-[10px]
+              font-bold
+              text-white
+            "
+          >
+            {totalItems}
+          </span>
+        )}
+
       </motion.button>
 
       <AnimatePresence>
+
         {open && (
+
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.25 }}
+            initial={{
+              opacity: 0,
+              y: -10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: .25,
+            }}
             className="
               absolute
               right-0
-              mt-3
-              w-[360px]
-              max-w-[calc(100vw-24px)]
+              top-full
+              z-50
+              mt-4
+              w-[420px]
               overflow-hidden
               rounded-3xl
               border
-              border-gray-200
-              bg-white/95
-              backdrop-blur-xl
-              shadow-[0_20px_60px_rgba(0,0,0,.12)]
-              dark:border-neutral-700
-              dark:bg-neutral-900
+              border-green-100
+              bg-white
+              shadow-[0_20px_60px_rgba(0,0,0,.15)]
             "
           >
+                        {/* ================= Header ================= */}
 
-            {/* Header */}
+            <div className="border-b border-green-100 bg-gradient-to-r from-green-50 via-white to-green-50 p-5">
 
-            <div className="border-b border-gray-100 px-5 py-4 dark:border-neutral-800">
+              <div className="flex items-center justify-between">
 
-              <h2 className="text-lg font-bold">
-                Shopping Cart
-              </h2>
+                {/* Left */}
 
-              <p className="mt-1 text-sm text-gray-500">
-                {count} item(s) in your cart
-              </p>
+                <div className="flex items-center gap-3">
 
-            </div>
-
-            {/* Cart Items */}
-
-            <div className="max-h-80 overflow-y-auto">
-
-                            {demoItems.map((item) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  whileHover={{ backgroundColor: "#f9fafb" }}
-                  className="flex items-center gap-4 border-b border-gray-100 px-5 py-4 transition-all duration-300 dark:border-neutral-800 dark:hover:bg-neutral-800/40"
-                >
-                  {/* Product Image */}
-
-                  <img
-                    src={item.image}
-                    alt={item.name}
+                  <div
                     className="
-                      h-14
-                      w-14
+                      flex
+                      h-12
+                      w-12
+                      items-center
+                      justify-center
                       rounded-2xl
-                      border
-                      border-gray-100
-                      bg-gray-100
-                      object-cover
-                      p-1
+                      bg-green-100
                     "
-                  />
+                  >
+                    <ShoppingCart
+                      size={24}
+                      className="text-green-600"
+                    />
+                  </div>
 
-                  {/* Product Details */}
+                  <div>
 
-                  <div className="min-w-0 flex-1">
+                    <h2 className="text-lg font-bold text-gray-800">
+                      Shopping Cart
+                    </h2>
 
-                    <h3 className="truncate text-sm font-semibold text-gray-800 dark:text-white">
-                      {item.name}
-                    </h3>
-
-                    <p className="mt-1 text-sm font-medium text-green-600">
-                      ₹{item.price}
+                    <p className="text-sm text-gray-500">
+                      {totalItems} Item
+                      {totalItems !== 1 ? "s" : ""} in cart
                     </p>
-
-                    {/* Qty */}
-
-                    <div className="mt-3 flex items-center gap-2">
-
-                      <button
-                        className="
-                          flex
-                          h-7
-                          w-7
-                          items-center
-                          justify-center
-                          rounded-lg
-                          bg-gray-100
-                          transition
-                          hover:bg-green-100
-                        "
-                      >
-                        <Minus size={14} />
-                      </button>
-
-                      <span className="w-6 text-center text-sm font-semibold">
-                        {item.qty}
-                      </span>
-
-                      <button
-                        className="
-                          flex
-                          h-7
-                          w-7
-                          items-center
-                          justify-center
-                          rounded-lg
-                          bg-gray-100
-                          transition
-                          hover:bg-green-100
-                        "
-                      >
-                        <Plus size={14} />
-                      </button>
-
-                    </div>
 
                   </div>
 
-                </motion.div>
-              ))}
-            </div>
-                        {/* Footer */}
+                </div>
 
-            <div className="border-t border-gray-100 p-5 dark:border-neutral-800">
+                {/* Close */}
 
-              {/* Subtotal */}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="
+                    flex
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-gray-100
+                    transition
+                    hover:bg-red-100
+                    hover:text-red-600
+                  "
+                >
+                  <X size={18} />
+                </button>
 
-              <div className="mb-5 flex items-center justify-between rounded-2xl bg-gray-50 p-4 dark:bg-neutral-800">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                  Subtotal
-                </span>
-
-                <span className="text-xl font-bold text-green-600">
-                  ₹{subtotal}
-                </span>
               </div>
 
-              {/* View Cart */}
-
-              <Link
-                to="/cart"
-                onClick={() => setOpen(false)}
-                className="
-                  mb-3
-                  flex
-                  h-11
-                  items-center
-                  justify-center
-                  rounded-xl
-                  border
-                  border-green-600
-                  font-semibold
-                  text-green-600
-                  transition-all
-                  duration-300
-                  hover:bg-green-50
-                  dark:hover:bg-neutral-800
-                "
-              >
-                View Cart
-              </Link>
-
-              {/* Checkout */}
-
-              <Link
-                to="/checkout"
-                onClick={() => setOpen(false)}
-                className="
-                  flex
-                  h-11
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-gradient-to-r
-                  from-green-600
-                  to-emerald-500
-                  font-semibold
-                  text-white
-                  shadow-lg
-                  transition-all
-                  duration-300
-                  hover:scale-[1.02]
-                  hover:from-green-700
-                  hover:to-emerald-600
-                "
-              >
-                Proceed to Checkout
-              </Link>
-
             </div>
 
+            {/* ================= Loading ================= */}
+
+            {loading && (
+
+              <div className="flex h-72 items-center justify-center">
+
+                <div className="text-center">
+
+                  <div
+                    className="
+                      mx-auto
+                      h-10
+                      w-10
+                      animate-spin
+                      rounded-full
+                      border-4
+                      border-green-200
+                      border-t-green-600
+                    "
+                  />
+
+                  <p className="mt-4 text-sm text-gray-500">
+                    Loading your cart...
+                  </p>
+
+                </div>
+
+              </div>
+
+            )}
+
+            {/* ================= Empty Cart ================= */}
+
+            {!loading &&
+              items.length === 0 && (
+
+                <div className="px-6 py-14 text-center">
+
+                  <div
+                    className="
+                      mx-auto
+                      flex
+                      h-24
+                      w-24
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-green-50
+                    "
+                  >
+
+                    <ShoppingCart
+                      size={42}
+                      className="text-green-400"
+                    />
+
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-bold text-gray-800">
+                    Your cart is empty
+                  </h3>
+
+                  <p className="mt-2 text-sm text-gray-500">
+                    Looks like you haven't added
+                    anything yet.
+                  </p>
+
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                      navigate("/");
+                    }}
+                    className="
+                      mt-6
+                      rounded-xl
+                      bg-green-600
+                      px-6
+                      py-3
+                      font-semibold
+                      text-white
+                      transition
+                      hover:bg-green-700
+                    "
+                  >
+                    Continue Shopping
+                  </button>
+
+                </div>
+
+              )}
+
+            {/* ================= Cart Items ================= */}
+
+            {!loading &&
+              items.length > 0 && (
+
+                <div className="max-h-[420px] overflow-y-auto">
+                                    {items.map((item) => {
+                    const image =
+                      item.product.images?.[0]?.url ||
+                      item.product.images?.[0];
+
+                    return (
+                      <motion.div
+                        key={item.product._id}
+                        initial={{
+                          opacity: 0,
+                          y: 10,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                        }}
+                        className="
+                          flex
+                          gap-4
+                          border-b
+                          border-green-100
+                          p-5
+                          transition-all
+                          duration-300
+                          hover:bg-green-50
+                        "
+                      >
+
+                        {/* Product Image */}
+
+                        <div className="relative">
+
+                          <img
+                            src={image}
+                            alt={item.product.name}
+                            className="
+                              h-20
+                              w-20
+                              rounded-2xl
+                              border
+                              border-green-100
+                              object-cover
+                              bg-white
+                            "
+                          />
+
+                        </div>
+
+                        {/* Product Details */}
+
+                        <div className="flex flex-1 flex-col justify-between">
+
+                          <div>
+
+                            <h3
+                              className="
+                                line-clamp-2
+                                text-sm
+                                font-semibold
+                                text-gray-800
+                              "
+                            >
+                              {item.product.name}
+                            </h3>
+
+                            <div className="mt-2 flex items-center gap-2">
+
+                              <span
+                                className="
+                                  text-xl
+                                  font-bold
+                                  text-green-600
+                                "
+                              >
+                                ₹{item.product.sellingPrice}
+                              </span>
+
+                              {item.product.mrp && (
+                                <span
+                                  className="
+                                    text-sm
+                                    text-gray-400
+                                    line-through
+                                  "
+                                >
+                                  ₹{item.product.mrp}
+                                </span>
+                              )}
+
+                            </div>
+
+                          </div>
+
+                          {/* Bottom */}
+
+                          <div className="mt-4 flex items-center justify-between">
+
+                            {/* Quantity */}
+
+                            <div
+                              className="
+                                flex
+                                items-center
+                                overflow-hidden
+                                rounded-xl
+                                border
+                                border-green-200
+                              "
+                            >
+
+                              <button
+                                onClick={() =>
+                                  decreaseQty(item)
+                                }
+                                className="
+                                  px-3
+                                  py-2
+                                  transition
+                                  hover:bg-green-100
+                                "
+                              >
+                                <Minus size={15} />
+                              </button>
+
+                              <span
+                                className="
+                                  min-w-10
+                                  text-center
+                                  font-semibold
+                                "
+                              >
+                                {item.quantity}
+                              </span>
+
+                              <button
+                                onClick={() =>
+                                  increaseQty(item)
+                                }
+                                className="
+                                  bg-green-600
+                                  px-3
+                                  py-2
+                                  text-white
+                                  transition
+                                  hover:bg-green-700
+                                "
+                              >
+                                <Plus size={15} />
+                              </button>
+
+                            </div>
+
+                            {/* Remove */}
+
+                            <button
+                              onClick={() =>
+                                removeItem(
+                                  item.product._id
+                                )
+                              }
+                              className="
+                                rounded-full
+                                bg-red-50
+                                p-2
+                                text-red-500
+                                transition
+                                hover:bg-red-100
+                              "
+                            >
+                              <Trash2 size={18} />
+                            </button>
+
+                          </div>
+
+                        </div>
+
+                      </motion.div>
+                    );
+                  })}
+
+                </div>
+
+              )}
+                          {/* ================= Footer ================= */}
+
+            {items.length > 0 && (
+
+              <div className="border-t border-green-100 bg-gradient-to-b from-white to-green-50 p-5">
+
+                {/* Summary */}
+
+                <div className="mb-5 flex items-center justify-between">
+
+                  <div>
+
+                    <p className="text-sm text-gray-500">
+                      Total Amount
+                    </p>
+
+                    <h3 className="text-2xl font-bold text-green-600">
+                      ₹{totalPrice}
+                    </h3>
+
+                  </div>
+
+                  <div
+                    className="
+                      rounded-full
+                      bg-green-100
+                      px-3
+                      py-1
+                      text-sm
+                      font-semibold
+                      text-green-700
+                    "
+                  >
+                    {totalItems} Item
+                    {totalItems > 1 ? "s" : ""}
+                  </div>
+
+                </div>
+
+                {/* View Cart */}
+
+                <button
+                  onClick={handleViewCart}
+                  className="
+                    mb-3
+                    flex
+                    h-12
+                    w-full
+                    items-center
+                    justify-center
+                    rounded-xl
+                    border
+                    border-green-600
+                    bg-white
+                    font-semibold
+                    text-green-600
+                    transition-all
+                    duration-300
+                    hover:bg-green-600
+                    hover:text-white
+                  "
+                >
+                  View Cart
+                </button>
+
+                {/* Checkout */}
+
+                <button
+                  onClick={handleCheckout}
+                  className="
+                    flex
+                    h-12
+                    w-full
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-gradient-to-r
+                    from-green-600
+                    to-emerald-500
+                    font-semibold
+                    text-white
+                    shadow-lg
+                    transition-all
+                    duration-300
+                    hover:scale-[1.02]
+                  "
+                >
+                  Proceed To Checkout
+                </button>
+
+              </div>
+
+            )}
+
           </motion.div>
+
         )}
+
       </AnimatePresence>
+
     </div>
+
   );
 };
 

@@ -8,7 +8,7 @@ import {
 } from "@/redux/admin/product/productThunk";
 
 import {
-  resetProductState,
+  clearProductState,
 } from "@/redux/admin/product/productSlice";
 
 const DeleteProductModal = ({
@@ -19,7 +19,7 @@ const DeleteProductModal = ({
   const dispatch = useDispatch();
 
   const { loading } = useSelector(
-    (state) => state.product
+    (state) => state.adminProduct
   );
 
   if (!open || !product) return null;
@@ -33,18 +33,18 @@ const DeleteProductModal = ({
       if (deleteProduct.fulfilled.match(result)) {
         toast.success(
           result.payload?.message ||
-          "Product deleted successfully"
+            "Product deleted successfully"
         );
 
         await dispatch(getProducts());
 
-        dispatch(resetProductState());
+        dispatch(clearProductState());
 
         onClose();
       } else {
         toast.error(
           result.payload ||
-          "Failed to delete product"
+            "Failed to delete product"
         );
       }
     } catch (error) {
@@ -84,8 +84,7 @@ const DeleteProductModal = ({
         {/* Body */}
         <div className="space-y-4 p-6">
           <p className="text-gray-600">
-            Are you sure you want to delete this
-            product?
+            Are you sure you want to delete this product?
           </p>
 
           <div className="rounded-xl bg-red-50 p-4">
@@ -128,9 +127,7 @@ const DeleteProductModal = ({
             disabled={loading}
             className="rounded-xl bg-red-600 px-5 py-2.5 text-white transition hover:bg-red-700 disabled:opacity-50"
           >
-            {loading
-              ? "Deleting..."
-              : "Delete"}
+            {loading ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>

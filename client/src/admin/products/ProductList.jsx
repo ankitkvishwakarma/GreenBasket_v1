@@ -14,7 +14,9 @@ const ProductList = ({
   const {
     products = [],
     loading,
-  } = useSelector((state) => state.product);
+  } = useSelector((state) => state.adminProduct);
+
+  console.log("Redux Products :", products);
 
   const filteredProducts = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -26,7 +28,7 @@ const ProductList = ({
         product.name?.toLowerCase().includes(keyword) ||
         product.brand?.toLowerCase().includes(keyword) ||
         product.sku?.toLowerCase().includes(keyword) ||
-        product.category?.name
+        product.Categories?.name
           ?.toLowerCase()
           .includes(keyword) ||
         product.description
@@ -36,12 +38,11 @@ const ProductList = ({
     });
   }, [products, search]);
 
+  console.log("Filtered :", filteredProducts);
+
   return (
     <div className="space-y-6">
-
-      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
         <div>
           <h1 className="text-3xl font-bold text-slate-800">
             Products
@@ -55,17 +56,14 @@ const ProductList = ({
         <button
           type="button"
           onClick={onAdd}
-          className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-medium text-white transition hover:bg-green-700"
+          className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-medium text-white hover:bg-green-700"
         >
           <Plus size={18} />
           Add Product
         </button>
-
       </div>
 
-      {/* Search */}
       <div className="relative">
-
         <Search
           size={18}
           className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
@@ -75,22 +73,17 @@ const ProductList = ({
           type="text"
           placeholder="Search products..."
           value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
-          className="w-full rounded-xl border border-gray-300 py-3 pl-11 pr-4 outline-none transition focus:border-green-500"
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-xl border border-gray-300 py-3 pl-11 pr-4 outline-none focus:border-green-500"
         />
-
       </div>
 
-      {/* Product Table */}
       <ProductTable
         products={filteredProducts}
         loading={loading}
         onEdit={onEdit}
         onDelete={onDelete}
       />
-
     </div>
   );
 };

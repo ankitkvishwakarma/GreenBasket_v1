@@ -14,62 +14,63 @@ import {
   getProductStatsAPI,
 } from "./productService";
 
-// ==============================
-// Get All Products
-// ==============================
+/* =====================================================
+   GET PRODUCTS
+===================================================== */
+
 export const getProducts = createAsyncThunk(
-  "product/getProducts",
+  "adminProduct/getProducts",
   async (params = {}, thunkAPI) => {
     try {
       return await getProductsAPI(params);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to fetch products"
+        error.response?.data?.message || error.message
       );
     }
   }
 );
 
-// ==============================
-// Get Product By ID
-// ==============================
+/* =====================================================
+   GET PRODUCT BY ID
+===================================================== */
+
 export const getProductById = createAsyncThunk(
-  "product/getProductById",
+  "adminProduct/getProductById",
   async (id, thunkAPI) => {
     try {
       return await getProductByIdAPI(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to fetch product"
+        error.response?.data?.message || error.message
       );
     }
   }
 );
 
-// ==============================
-// Create Product
-// ==============================
+/* =====================================================
+   CREATE PRODUCT
+===================================================== */
+
 export const createProduct = createAsyncThunk(
-  "product/createProduct",
+  "adminProduct/createProduct",
   async (productData, thunkAPI) => {
     try {
       return await createProductAPI(productData);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to create product"
+        error.response?.data?.message || error.message
       );
     }
   }
 );
 
-// ==============================
-// Update Product
-// ==============================
+/* =====================================================
+   UPDATE PRODUCT
+===================================================== */
+
 export const updateProduct = createAsyncThunk(
-  "product/updateProduct",
+  "adminProduct/updateProduct",
   async ({ id, productData }, thunkAPI) => {
     try {
       return await updateProductAPI({
@@ -78,134 +79,126 @@ export const updateProduct = createAsyncThunk(
       });
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to update product"
+        error.response?.data?.message || error.message
       );
     }
   }
 );
 
-// ==============================
-// Delete Product
-// ==============================
+/* =====================================================
+   DELETE PRODUCT
+===================================================== */
+
 export const deleteProduct = createAsyncThunk(
-  "product/deleteProduct",
+  "adminProduct/deleteProduct",
   async (id, thunkAPI) => {
     try {
       return await deleteProductAPI(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to delete product"
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+/* =====================================================
+   LOW STOCK PRODUCTS
+===================================================== */
+
+export const getLowStockProducts = createAsyncThunk(
+  "adminProduct/getLowStockProducts",
+  async (_, thunkAPI) => {
+    try {
+      return await getLowStockProductsAPI();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
       );
     }
   }
 );
 
-// ==============================
-// Low Stock Products
-// ==============================
-export const getLowStockProducts =
-  createAsyncThunk(
-    "product/getLowStockProducts",
-    async (_, thunkAPI) => {
-      try {
-        return await getLowStockProductsAPI();
-      } catch (error) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch low stock products"
-        );
-      }
-    }
-  );
+/* =====================================================
+   FEATURED PRODUCTS
+===================================================== */
 
-// ==============================
-// Featured Products
-// ==============================
-export const getFeaturedProducts =
-  createAsyncThunk(
-    "product/getFeaturedProducts",
-    async (_, thunkAPI) => {
-      try {
-        return await getFeaturedProductsAPI();
-      } catch (error) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch featured products"
-        );
-      }
+export const getFeaturedProducts = createAsyncThunk(
+  "adminProduct/getFeaturedProducts",
+  async (_, thunkAPI) => {
+    try {
+      return await getFeaturedProductsAPI();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
-  );
+  }
+);
 
-// ==============================
-// Latest Products
-// ==============================
-export const getLatestProducts =
-  createAsyncThunk(
-    "product/getLatestProducts",
-    async (_, thunkAPI) => {
-      try {
-        return await getLatestProductsAPI();
-      } catch (error) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch latest products"
-        );
-      }
-    }
-  );
+/* =====================================================
+   LATEST PRODUCTS
+===================================================== */
 
-// ==============================
-// Best Seller Products
-// ==============================
-export const getBestSellerProducts =
-  createAsyncThunk(
-    "product/getBestSellerProducts",
-    async (_, thunkAPI) => {
-      try {
-        return await getBestSellerProductsAPI();
-      } catch (error) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch best seller products"
-        );
-      }
+export const getLatestProducts = createAsyncThunk(
+  "adminProduct/getLatestProducts",
+  async (_, thunkAPI) => {
+    try {
+      return await getLatestProductsAPI();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
-  );
+  }
+);
 
-// ==============================
-// Related Products
-// ==============================
-export const getRelatedProducts =
-  createAsyncThunk(
-    "product/getRelatedProducts",
-    async (id, thunkAPI) => {
-      try {
-        return await getRelatedProductsAPI(id);
-      } catch (error) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch related products"
-        );
-      }
-    }
-  );
+/* =====================================================
+   BEST SELLER PRODUCTS
+===================================================== */
 
-// ==============================
-// Product Statistics
-// ==============================
-export const getProductStats =
-  createAsyncThunk(
-    "product/getProductStats",
-    async (_, thunkAPI) => {
-      try {
-        return await getProductStatsAPI();
-      } catch (error) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch product statistics"
-        );
-      }
+export const getBestSellerProducts = createAsyncThunk(
+  "adminProduct/getBestSellerProducts",
+  async (_, thunkAPI) => {
+    try {
+      return await getBestSellerProductsAPI();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
-  );
+  }
+);
+
+/* =====================================================
+   RELATED PRODUCTS
+===================================================== */
+
+export const getRelatedProducts = createAsyncThunk(
+  "adminProduct/getRelatedProducts",
+  async (id, thunkAPI) => {
+    try {
+      return await getRelatedProductsAPI(id);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
+/* =====================================================
+   PRODUCT STATS
+===================================================== */
+
+export const getProductStats = createAsyncThunk(
+  "adminProduct/getProductStats",
+  async (_, thunkAPI) => {
+    try {
+      return await getProductStatsAPI();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);

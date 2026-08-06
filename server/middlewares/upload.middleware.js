@@ -1,33 +1,52 @@
 import multer from "multer";
 
+/* =====================================================
+   Memory Storage
+===================================================== */
+
 const storage = multer.memoryStorage();
 
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-    "application/pdf",
-  ];
+/* =====================================================
+   Allowed File Types
+===================================================== */
 
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(
+const allowedMimeTypes = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
+/* =====================================================
+   File Filter
+===================================================== */
+
+const fileFilter = (req, file, cb) => {
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    return cb(
       new Error(
-        "Only JPG, JPEG, PNG, WEBP and PDF files are allowed."
+        "Only JPG, JPEG, PNG and WEBP images are allowed."
       ),
       false
     );
   }
+
+  cb(null, true);
 };
+
+/* =====================================================
+   Multer Configuration
+===================================================== */
 
 const upload = multer({
   storage,
+
   fileFilter,
+
   limits: {
     fileSize: 5 * 1024 * 1024, // 5 MB
+
+    files: 5,
   },
 });
 

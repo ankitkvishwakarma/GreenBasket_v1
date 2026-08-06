@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-// import Logo from "./Logo";
+import Logo from "./Logo";
 import LocationSelector from "./LocationSelector";
 import SearchBar from "./SearchBar";
 import NavLinks from "./NavLinks";
@@ -62,7 +62,7 @@ const Navbar = () => {
                     ease: "easeInOut",
                 }}
                 className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${isScrolled
-                        ? `
+                    ? `
       bg-gradient-to-r
       from-[#F5FFF6]
       via-[#ECFDF3]
@@ -70,7 +70,7 @@ const Navbar = () => {
       border-b border-green-200
       shadow-md
     `
-                        : `
+                    : `
       bg-gradient-to-r
       from-[#F9FFF9]
       via-[#F2FFF5]

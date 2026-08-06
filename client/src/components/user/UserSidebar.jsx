@@ -44,7 +44,7 @@ const UserSidebar = ({ user }) => {
             id: 4,
             title: "Cart",
             icon: ShoppingCart,
-            path: "/cart",
+            path: "/user/cart",
         },
         {
             id: 5,

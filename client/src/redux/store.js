@@ -1,29 +1,48 @@
 import { configureStore } from "@reduxjs/toolkit";
-import productReducer from "./admin/product/productSlice";
-import authReducer from "./auth/authSlice";
-import categoryReducer from "./admin/category/AdminCategorySlice";
-import couponReducer from "@/redux/admin/coupon/couponSlice";
-import deliveryReducer from "./admin/delivery/deliverySlice";
-import orderReducer from "./user/userorder/orderSlice";
-import addressReducer from "@/redux/user/address/addressSlice";
 
+// ================= Auth =================
+import authReducer from "./auth/authSlice";
+
+// ================= Admin =================
+import adminCategoryReducer from "./admin/category/AdminCategorySlice";
+import adminProductReducer from "./admin/product/productSlice";
+import couponReducer from "./admin/coupon/couponSlice";
+import deliveryReducer from "./admin/delivery/deliverySlice";
+
+// ================= User =================
+import addressReducer from "./user/address/addressSlice";
 import userDashboardReducer from "./user/userDashboard/userDashboardSlice";
 import profileReducer from "./user/userprofile/profileSlice";
 import userOrderReducer from "./user/userorder/orderSlice";
+import cartReducer from "@/redux/cart/cartSlice.js";
+
+// ================= Guest Product =================
+import productReducer from "./product/productSlice";
 
 export const store = configureStore({
   reducer: {
-    product: productReducer,
+    // Authentication
     auth: authReducer,
-    category: categoryReducer,
+
+    // Guest Product
+    product: productReducer,
+    
+
+    // Admin
+    adminProduct: adminProductReducer,
+    category: adminCategoryReducer,
     coupon: couponReducer,
-    order: orderReducer,
     delivery: deliveryReducer,
+
+    // User
+    address: addressReducer,
     userDashboard: userDashboardReducer,
     profile: profileReducer,
     order: userOrderReducer,
-    address: addressReducer,
+    cart: cartReducer,
   },
+
+  devTools: import.meta.env.DEV,
 });
 
 // import { configureStore } from "@reduxjs/toolkit";
@@ -43,7 +62,7 @@ export const store = configureStore({
 //     auth: authReducer,
 
 //     // Future
-//     product: productReducer,
+//     
 //     cart: cartReducer,
 //     wishlist: wishlistReducer,
 //     order: orderReducer,

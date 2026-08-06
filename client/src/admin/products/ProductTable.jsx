@@ -23,45 +23,16 @@ const ProductTable = ({
 
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-5 py-4 text-left text-sm font-semibold">
-                #
-              </th>
-
-              <th className="px-5 py-4 text-left text-sm font-semibold">
-                Image
-              </th>
-
-              <th className="px-5 py-4 text-left text-sm font-semibold">
-                Product
-              </th>
-
-              <th className="px-5 py-4 text-left text-sm font-semibold">
-                Category
-              </th>
-
-              <th className="px-5 py-4 text-left text-sm font-semibold">
-                Brand
-              </th>
-
-              <th className="px-5 py-4 text-center text-sm font-semibold">
-                Price
-              </th>
-
-              <th className="px-5 py-4 text-center text-sm font-semibold">
-                Stock
-              </th>
-
-              <th className="px-5 py-4 text-center text-sm font-semibold">
-                Status
-              </th>
-
-              <th className="px-5 py-4 text-center text-sm font-semibold">
-                Featured
-              </th>
-
-              <th className="px-5 py-4 text-center text-sm font-semibold">
-                Actions
-              </th>
+              <th className="px-5 py-4 text-left">#</th>
+              <th className="px-5 py-4 text-left">Image</th>
+              <th className="px-5 py-4 text-left">Product</th>
+              <th className="px-5 py-4 text-left">Category</th>
+              <th className="px-5 py-4 text-left">Brand</th>
+              <th className="px-5 py-4 text-center">Price</th>
+              <th className="px-5 py-4 text-center">Stock</th>
+              <th className="px-5 py-4 text-center">Status</th>
+              <th className="px-5 py-4 text-center">Featured</th>
+              <th className="px-5 py-4 text-center">Actions</th>
             </tr>
           </thead>
 
@@ -79,7 +50,7 @@ const ProductTable = ({
               products.map((product, index) => (
                 <tr
                   key={product._id}
-                  className="border-t transition hover:bg-gray-50"
+                  className="border-t hover:bg-gray-50"
                 >
                   <td className="px-5 py-4">
                     {index + 1}
@@ -93,10 +64,6 @@ const ProductTable = ({
                       }
                       alt={product.name}
                       className="h-14 w-14 rounded-lg border object-cover"
-                      onError={(e) => {
-                        e.target.src =
-                          "/images/no-image.png";
-                      }}
                     />
                   </td>
 
@@ -107,13 +74,13 @@ const ProductTable = ({
                       </p>
 
                       <p className="text-xs text-gray-500">
-                        SKU: {product.sku || "-"}
+                        SKU : {product.sku || "-"}
                       </p>
                     </div>
                   </td>
 
                   <td className="px-5 py-4">
-                    {product.category?.name || "-"}
+                    {product.Categories?.name || "-"}
                   </td>
 
                   <td className="px-5 py-4">
@@ -123,12 +90,12 @@ const ProductTable = ({
                   <td className="px-5 py-4 text-center">
                     <div>
                       <p className="font-semibold text-green-600">
-                        ₹{product.price}
+                        ₹{product.sellingPrice}
                       </p>
 
-                      {product.discountPrice > 0 && (
+                      {product.mrp > product.sellingPrice && (
                         <p className="text-xs text-gray-400 line-through">
-                          ₹{product.discountPrice}
+                          ₹{product.mrp}
                         </p>
                       )}
                     </div>
@@ -151,14 +118,14 @@ const ProductTable = ({
                   <td className="px-5 py-4 text-center">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        product.isActive
+                        product.isAvailable
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {product.isActive
-                        ? "Active"
-                        : "Inactive"}
+                      {product.isAvailable
+                        ? "Available"
+                        : "Out of Stock"}
                     </span>
                   </td>
 
@@ -170,33 +137,28 @@ const ProductTable = ({
                           : "bg-gray-100 text-gray-500"
                       }`}
                     >
-                      {product.isFeatured
-                        ? "Yes"
-                        : "No"}
+                      {product.isFeatured ? "Yes" : "No"}
                     </span>
                   </td>
 
                   <td className="px-5 py-4">
                     <div className="flex justify-center gap-3">
                       <button
-                        onClick={() =>
-                          onEdit(product)
-                        }
-                        className="rounded-lg bg-blue-100 p-2 text-blue-600 transition hover:bg-blue-200"
+                        onClick={() => onEdit(product)}
+                        className="rounded-lg bg-blue-100 p-2 text-blue-600 hover:bg-blue-200"
                       >
                         <Pencil size={18} />
                       </button>
 
                       <button
-                        onClick={() =>
-                          onDelete(product)
-                        }
-                        className="rounded-lg bg-red-100 p-2 text-red-600 transition hover:bg-red-200"
+                        onClick={() => onDelete(product)}
+                        className="rounded-lg bg-red-100 p-2 text-red-600 hover:bg-red-200"
                       >
                         <Trash2 size={18} />
                       </button>
                     </div>
                   </td>
+
                 </tr>
               ))
             )}

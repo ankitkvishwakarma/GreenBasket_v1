@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 const CategoryCard = ({ category }) => {
   const navigate = useNavigate();
 
+  if (!category) return null;
+
   const handleClick = () => {
-    navigate(`/products?category=${category.slug || category._id}`);
+    navigate(`/category/${category.slug}`);
   };
 
   return (
@@ -37,8 +39,11 @@ const CategoryCard = ({ category }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
 
         <img
-          src={category.image.url}
-          alt={category.name}
+          src={
+            category?.image?.url ||
+            "/images/no-image.png"
+          }
+          alt={category?.name}
           loading="lazy"
           className="
             mx-auto
@@ -52,7 +57,7 @@ const CategoryCard = ({ category }) => {
           "
         />
 
-        {category.featured && (
+        {category?.featured && (
           <span
             className="
               absolute
@@ -70,6 +75,7 @@ const CategoryCard = ({ category }) => {
             Featured
           </span>
         )}
+
       </div>
 
       {/* Content */}
@@ -84,19 +90,13 @@ const CategoryCard = ({ category }) => {
 
           <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
             <Package size={15} />
-
             {category.productCount || 0} Products
           </div>
 
         </div>
 
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-          "
-        >
+        <div className="flex items-center justify-between">
+
           <span className="font-medium text-green-600">
             Explore
           </span>
@@ -104,12 +104,13 @@ const CategoryCard = ({ category }) => {
           <ArrowRight
             size={18}
             className="
+              text-green-600
               transition-transform
               duration-300
               group-hover:translate-x-2
-              text-green-600
             "
           />
+
         </div>
 
       </div>
