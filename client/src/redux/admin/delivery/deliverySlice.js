@@ -1,5 +1,5 @@
-
 import { createSlice } from "@reduxjs/toolkit";
+
 import {
   getDeliveryBoys,
   getDeliveryBoyById,
@@ -27,10 +27,9 @@ const initialState = {
   message: "",
 };
 
-
-
 const deliverySlice = createSlice({
   name: "delivery",
+
   initialState,
 
   reducers: {
@@ -42,247 +41,429 @@ const deliverySlice = createSlice({
       state.deliveryBoy = null;
       state.currentLocation = null;
     },
+
+    clearDeliveryError: (state) => {
+      state.error = null;
+    },
+
+    clearDeliveryMessage: (state) => {
+      state.message = "";
+    },
   },
 
   extraReducers: (builder) => {
     builder
-      .addCase(getDeliveryBoys.pending, (state) => {
-        state.loading = true;
-      })
 
-      .addCase(getDeliveryBoys.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
+      // ==========================================
+      // GET ALL DELIVERY BOYS
+      // ==========================================
 
-        state.deliveryBoys =
-          action.payload.deliveryBoys || [];
-
-        state.page =
-          action.payload.currentPage || 1;
-
-        state.totalPages =
-          action.payload.totalPages || 1;
-
-        state.total =
-          action.payload.total || 0;
-
-        state.message =
-          action.payload.message || "";
-      })
-
-      .addCase(getDeliveryBoys.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      .addCase(getDeliveryBoyById.pending, (state) => {
-        state.loading = true;
-      })
-
-      .addCase(getDeliveryBoyById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-        state.deliveryBoy =
-          action.payload.deliveryBoy;
-      })
-
-      .addCase(getDeliveryBoyById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // =============================
-      // Register Delivery Boy
-      // =============================
-      .addCase(registerDeliveryBoy.pending, (state) => {
-        state.loading = true;
-      })
-
-      .addCase(registerDeliveryBoy.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-
-        const newDeliveryBoy = action.payload.deliveryBoy;
-
-        if (newDeliveryBoy) {
-          state.deliveryBoys.unshift(newDeliveryBoy);
-          state.total += 1;
+      .addCase(
+        getDeliveryBoys.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
         }
+      )
 
-        state.message = action.payload.message;
-      })
+      .addCase(
+        getDeliveryBoys.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
 
-      .addCase(registerDeliveryBoy.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+          state.deliveryBoys =
+            action.payload?.deliveryBoys || [];
 
-      // =============================
-      // Update Delivery Boy
-      // =============================
-      .addCase(updateDeliveryBoy.pending, (state) => {
-        state.loading = true;
-      })
+          state.page =
+            action.payload?.currentPage || 1;
 
-      .addCase(updateDeliveryBoy.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
+          state.totalPages =
+            action.payload?.totalPages || 1;
 
-        const updated = action.payload.deliveryBoy;
+          state.total =
+            action.payload?.total || 0;
 
-        state.deliveryBoys = state.deliveryBoys.map((item) =>
-          item._id === updated._id ? updated : item
-        );
-
-        if (
-          state.deliveryBoy &&
-          state.deliveryBoy._id === updated._id
-        ) {
-          state.deliveryBoy = updated;
+          state.message =
+            action.payload?.message || "";
         }
+      )
 
-        state.message = action.payload.message;
-      })
-
-      .addCase(updateDeliveryBoy.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // =============================
-      // Verify Delivery Boy
-      // =============================
-      .addCase(verifyDeliveryBoy.pending, (state) => {
-        state.loading = true;
-      })
-
-      .addCase(verifyDeliveryBoy.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-
-        const updated = action.payload.deliveryBoy;
-
-        state.deliveryBoys = state.deliveryBoys.map((item) =>
-          item._id === updated._id ? updated : item
-        );
-
-        if (
-          state.deliveryBoy &&
-          state.deliveryBoy._id === updated._id
-        ) {
-          state.deliveryBoy = updated;
+      .addCase(
+        getDeliveryBoys.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
         }
+      )
 
-        state.message = action.payload.message;
-      })
+      // ==========================================
+      // GET DELIVERY BOY BY ID
+      // ==========================================
 
-      .addCase(verifyDeliveryBoy.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // =============================
-      // Update Availability
-      // =============================
-      .addCase(updateAvailability.pending, (state) => {
-        state.loading = true;
-      })
-
-      .addCase(updateAvailability.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-
-        const updated = action.payload.deliveryBoy;
-
-        state.deliveryBoys = state.deliveryBoys.map((item) =>
-          item._id === updated._id ? updated : item
-        );
-
-        if (
-          state.deliveryBoy &&
-          state.deliveryBoy._id === updated._id
-        ) {
-          state.deliveryBoy = updated;
+      .addCase(
+        getDeliveryBoyById.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
         }
+      )
 
-        state.message = action.payload.message;
-      })
+      .addCase(
+        getDeliveryBoyById.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
 
-      .addCase(updateAvailability.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+          state.deliveryBoy =
+            action.payload?.deliveryBoy || null;
+        }
+      )
 
-      // =============================
-      // Delete Delivery Boy
-      // =============================
-      .addCase(deleteDeliveryBoy.pending, (state) => {
-        state.loading = true;
-      })
+      .addCase(
+        getDeliveryBoyById.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        }
+      )
 
-      .addCase(deleteDeliveryBoy.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
+      // ==========================================
+      // REGISTER DELIVERY BOY
+      // ==========================================
 
-        state.deliveryBoys = state.deliveryBoys.filter(
-          (item) => item._id !== action.payload
-        );
+      .addCase(
+        registerDeliveryBoy.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+          state.success = false;
+        }
+      )
 
-        state.total = Math.max(0, state.total - 1);
+      .addCase(
+        registerDeliveryBoy.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
 
-        state.message = "Delivery Boy deleted successfully";
-      })
+          const deliveryBoy =
+            action.payload?.deliveryBoy ||
+            action.payload?.data;
 
-      .addCase(deleteDeliveryBoy.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      // =============================
-      // Assign Delivery Boy
-      // =============================
-      .addCase(assignDeliveryBoy.pending, (state) => {
-        state.loading = true;
-      })
+          if (deliveryBoy) {
+            state.deliveryBoys.unshift(
+              deliveryBoy
+            );
 
-      .addCase(assignDeliveryBoy.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
+            state.total += 1;
+          }
 
-        state.message = action.payload.message;
-      })
+          state.message =
+            action.payload?.message ||
+            "Delivery Boy registered successfully.";
+        }
+      )
 
-      .addCase(assignDeliveryBoy.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+      .addCase(
+        registerDeliveryBoy.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
+        }
+      )
 
-      // =============================
-      // Get Delivery Location
-      // =============================
-      .addCase(getDeliveryLocation.pending, (state) => {
-        state.loading = true;
-      })
+      // ==========================================
+      // UPDATE DELIVERY BOY
+      // ==========================================
 
-      .addCase(getDeliveryLocation.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
+      .addCase(
+        updateDeliveryBoy.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+          state.success = false;
+        }
+      )
 
-        state.currentLocation =
-          action.payload.currentLocation ||
-          action.payload.location ||
-          null;
+      .addCase(
+        updateDeliveryBoy.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
 
-        state.message = action.payload.message || "";
-      })
+          const updated =
+            action.payload?.deliveryBoy;
 
-      .addCase(getDeliveryLocation.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+          if (updated) {
+            state.deliveryBoys =
+              state.deliveryBoys.map(
+                (item) =>
+                  item._id === updated._id
+                    ? updated
+                    : item
+              );
+
+            if (
+              state.deliveryBoy?._id ===
+              updated._id
+            ) {
+              state.deliveryBoy = updated;
+            }
+          }
+
+          state.message =
+            action.payload?.message ||
+            "Delivery Boy updated successfully.";
+        }
+      )
+
+      .addCase(
+        updateDeliveryBoy.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
+        }
+      )
+
+      // ==========================================
+      // VERIFY DELIVERY BOY
+      // ==========================================
+
+      .addCase(
+        verifyDeliveryBoy.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+          state.success = false;
+        }
+      )
+
+      .addCase(
+        verifyDeliveryBoy.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
+
+          const updated =
+            action.payload?.deliveryBoy;
+
+          if (updated) {
+            state.deliveryBoys =
+              state.deliveryBoys.map(
+                (item) =>
+                  item._id === updated._id
+                    ? updated
+                    : item
+              );
+
+            if (
+              state.deliveryBoy?._id ===
+              updated._id
+            ) {
+              state.deliveryBoy = updated;
+            }
+          }
+
+          state.message =
+            action.payload?.message ||
+            "Delivery Boy verified successfully.";
+        }
+      )
+
+      .addCase(
+        verifyDeliveryBoy.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
+        }
+      )
+
+      // ==========================================
+      // UPDATE AVAILABILITY
+      // ==========================================
+
+      .addCase(
+        updateAvailability.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+          state.success = false;
+        }
+      )
+
+      .addCase(
+        updateAvailability.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
+
+          const updated =
+            action.payload?.deliveryBoy;
+
+          if (updated) {
+            state.deliveryBoys =
+              state.deliveryBoys.map(
+                (item) =>
+                  item._id === updated._id
+                    ? updated
+                    : item
+              );
+
+            if (
+              state.deliveryBoy?._id ===
+              updated._id
+            ) {
+              state.deliveryBoy = updated;
+            }
+          }
+
+          state.message =
+            action.payload?.message ||
+            "Availability updated successfully.";
+        }
+      )
+
+      .addCase(
+        updateAvailability.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
+        }
+      )
+
+      // ==========================================
+      // DELETE DELIVERY BOY
+      // ==========================================
+
+      .addCase(
+        deleteDeliveryBoy.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+          state.success = false;
+        }
+      )
+
+      .addCase(
+        deleteDeliveryBoy.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
+
+          state.deliveryBoys =
+            state.deliveryBoys.filter(
+              (item) =>
+                item._id !== action.payload
+            );
+
+          state.total = Math.max(
+            0,
+            state.total - 1
+          );
+
+          if (
+            state.deliveryBoy?._id ===
+            action.payload
+          ) {
+            state.deliveryBoy = null;
+          }
+
+          state.message =
+            "Delivery Boy deleted successfully.";
+        }
+      )
+
+      .addCase(
+        deleteDeliveryBoy.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
+        }
+      )
+
+      // ==========================================
+      // ASSIGN DELIVERY BOY
+      // ==========================================
+
+      .addCase(
+        assignDeliveryBoy.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+          state.success = false;
+        }
+      )
+
+      .addCase(
+        assignDeliveryBoy.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
+
+          state.message =
+            action.payload?.message ||
+            "Delivery Boy assigned successfully.";
+        }
+      )
+
+      .addCase(
+        assignDeliveryBoy.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.success = false;
+          state.error = action.payload;
+        }
+      )
+
+      // ==========================================
+      // GET DELIVERY LOCATION
+      // ==========================================
+
+      .addCase(
+        getDeliveryLocation.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        getDeliveryLocation.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.success = true;
+
+          state.currentLocation =
+            action.payload?.location ||
+            action.payload?.currentLocation ||
+            null;
+
+          state.message =
+            action.payload?.message || "";
+        }
+      )
+
+      .addCase(
+        getDeliveryLocation.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        }
+      );
   },
 });
 
-export const { resetDeliveryState } =
-  deliverySlice.actions;
+export const {
+  resetDeliveryState,
+  clearDeliveryError,
+  clearDeliveryMessage,
+} = deliverySlice.actions;
 
 export default deliverySlice.reducer;

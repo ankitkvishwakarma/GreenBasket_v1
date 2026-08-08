@@ -1,431 +1,543 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Plus,
-  // Search,
-  // RefreshCw,
-  // Filter,
-  Users,
-  ShieldCheck,
-  Truck,
-  WifiOff,
-} from "lucide-react";
+
 import {
   getDeliveryBoys,
+  getDeliveryBoyById,
   registerDeliveryBoy,
   updateDeliveryBoy,
+  verifyDeliveryBoy,
+  updateAvailability,
+  deleteDeliveryBoy,
+  assignDeliveryBoy,
+  getDeliveryLocation,
 } from "../../redux/admin/delivery/deliveryThunk";
 
-import DeliveryTable from "../delivery/DeliveryTable";
-import DeliveryForm from "../delivery/DeliveryForm";
+import { fetchOrders } from "../../redux/admin/order/orderThunk";
+
+import DeliveryHeader from "../delivery/DeliveryHeader";
 import DeliverySearch from "../delivery/DeliverySearch";
 import DeliveryFilters from "../delivery/DeliveryFilters";
+import DeliveryTable from "../delivery/DeliveryTable";
+import DeliveryForm from "../delivery/DeliveryForm";
+import DeliveryDetailsModal from "../delivery/DeliveryDetailsModal";
+import DeleteDeliveryModal from "../delivery/DeleteDeliveryModal";
+import AssignOrderModal from "../delivery/AssignOrderModal";
+import DeliveryLocationModal from "../delivery/DeliveryLocationModal";
 
 const Delivery = () => {
   const dispatch = useDispatch();
 
+  // ==========================================
+  // REDUX STATE
+  // ==========================================
+
   const {
-    deliveryBoys,
-    loading,
+    deliveryBoys = [],
+    deliveryBoy = null,
+    currentLocation = null,
+    loading = false,
+    error = null,
+    message = "",
   } = useSelector((state) => state.delivery);
 
+  const { orders = [] } = useSelector(
+    (state) => state.order
+  );
+
+  // ==========================================
+  // LOCAL STATE
+  // ==========================================
+
   const [search, setSearch] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [availability, setAvailability] = useState("All");
 
-  const [showForm, setShowForm] = useState(false);
-
-  const [editingDeliveryBoy, setEditingDeliveryBoy] =
+  const [selectedDeliveryBoy, setSelectedDeliveryBoy] =
     useState(null);
+
+  const [openForm, setOpenForm] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
+
+  // ==========================================
+  // INITIAL DATA
+  // ==========================================
 
   useEffect(() => {
     dispatch(getDeliveryBoys());
+    dispatch(fetchOrders());
   }, [dispatch]);
 
+  // ==========================================
+  // REFRESH DELIVERY DATA
+  // ==========================================
+
+  const refreshDeliveryData = () => {
+    dispatch(getDeliveryBoys());
+  };
+
+  // ==========================================
+  // ADD DELIVERY BOY
+  // ==========================================
+
+  const handleAdd = () => {
+    setSelectedDeliveryBoy(null);
+    setOpenForm(true);
+  };
+
+  // ==========================================
+  // VIEW DELIVERY BOY
+  // ==========================================
+
+  const handleView = async (item) => {
+    if (!item?._id) return;
+
+    setSelectedDeliveryBoy(item);
+    setDetailsOpen(true);
+
+    dispatch(getDeliveryBoyById(item._id));
+  };
+
+  // ==========================================
+  // EDIT DELIVERY BOY
+  // ==========================================
+
+  const handleEdit = async (item) => {
+    if (!item?._id) return;
+
+    setSelectedDeliveryBoy(item);
+    setOpenForm(true);
+
+    dispatch(getDeliveryBoyById(item._id));
+  };
+
+  // ==========================================
+  // CLOSE FORM
+  // ==========================================
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+    setSelectedDeliveryBoy(null);
+  };
+
+  // ==========================================
+  // ADD / UPDATE DELIVERY BOY
+  // ==========================================
+
+  const handleSubmit = async (data) => {
+    let result;
+
+    // UPDATE
+    if (selectedDeliveryBoy?._id) {
+      result = await dispatch(
+        updateDeliveryBoy({
+          id: selectedDeliveryBoy._id,
+          formData: data,
+        })
+      );
+    }
+
+    // ADD
+    else {
+      result = await dispatch(
+        registerDeliveryBoy(data)
+      );
+    }
+
+    if (!result.error) {
+      handleCloseForm();
+      refreshDeliveryData();
+    }
+  };
+
+  // ==========================================
+  // DELETE DELIVERY BOY
+  // ==========================================
+
+  const handleDelete = (item) => {
+    if (!item?._id) return;
+
+    setSelectedDeliveryBoy(item);
+    setDeleteOpen(true);
+  };
+
+  const confirmDelete = async (id) => {
+    if (!id) return;
+
+    const result = await dispatch(
+      deleteDeliveryBoy(id)
+    );
+
+    if (!result.error) {
+      setDeleteOpen(false);
+      setSelectedDeliveryBoy(null);
+
+      refreshDeliveryData();
+    }
+  };
+
+  // ==========================================
+  // CLOSE DELETE MODAL
+  // ==========================================
+
+  const handleCloseDelete = () => {
+    setDeleteOpen(false);
+    setSelectedDeliveryBoy(null);
+  };
+
+  // ==========================================
+  // VERIFY DELIVERY BOY
+  // ==========================================
+
+  const handleVerify = async (item) => {
+    if (!item?._id) return;
+
+    const result = await dispatch(
+      verifyDeliveryBoy(item._id)
+    );
+
+    if (!result.error) {
+      refreshDeliveryData();
+    }
+  };
+
+  // ==========================================
+  // UPDATE AVAILABILITY
+  // ==========================================
+
+  const handleAvailabilityChange = async (item) => {
+    if (!item?._id) return;
+
+    const result = await dispatch(
+      updateAvailability({
+        id: item._id,
+        isAvailable: !item.isAvailable,
+      })
+    );
+
+    if (!result.error) {
+      refreshDeliveryData();
+    }
+  };
+
+  // ==========================================
+  // ASSIGN ORDER
+  // ==========================================
+
+  const handleAssignOpen = (item) => {
+    if (!item?._id) return;
+
+    setSelectedDeliveryBoy(item);
+    setAssignOpen(true);
+  };
+
+  const handleAssign = async (data) => {
+    if (!data?.orderId || !data?.deliveryBoyId) {
+      return;
+    }
+
+    const result = await dispatch(
+      assignDeliveryBoy({
+        orderId: data.orderId,
+        deliveryBoyId: data.deliveryBoyId,
+      })
+    );
+
+    if (!result.error) {
+      setAssignOpen(false);
+      setSelectedDeliveryBoy(null);
+
+      // Refresh delivery boys
+      dispatch(getDeliveryBoys());
+
+      // Refresh orders
+      dispatch(fetchOrders());
+    }
+  };
+
+  // ==========================================
+  // CLOSE ASSIGN MODAL
+  // ==========================================
+
+  const handleCloseAssign = () => {
+    setAssignOpen(false);
+    setSelectedDeliveryBoy(null);
+  };
+
+  // ==========================================
+  // DELIVERY LOCATION
+  // ==========================================
+
+  const handleLocation = (item) => {
+    if (!item?._id) return;
+
+    setSelectedDeliveryBoy(item);
+    setLocationOpen(true);
+
+    dispatch(
+      getDeliveryLocation(item._id)
+    );
+  };
+
+  const loadLocation = (id) => {
+    if (!id) return;
+
+    dispatch(getDeliveryLocation(id));
+  };
+
+  // ==========================================
+  // CLOSE LOCATION MODAL
+  // ==========================================
+
+  const handleCloseLocation = () => {
+    setLocationOpen(false);
+    setSelectedDeliveryBoy(null);
+  };
+
+  // ==========================================
+  // CLOSE DETAILS MODAL
+  // ==========================================
+
+  const handleCloseDetails = () => {
+    setDetailsOpen(false);
+    setSelectedDeliveryBoy(null);
+  };
+
+  // ==========================================
+  // SEARCH + FILTER
+  // ==========================================
+
   const filteredDeliveryBoys = useMemo(() => {
-    return deliveryBoys.filter((deliveryBoy) => {
+    const keyword = search.trim().toLowerCase();
+
+    return deliveryBoys.filter((item) => {
+      const name = String(
+        item.name || ""
+      ).toLowerCase();
+
+      const email = String(
+        item.email || ""
+      ).toLowerCase();
+
+      const phone = String(
+        item.phone || ""
+      ).toLowerCase();
+
+      const vehicleNumber = String(
+        item.vehicleNumber || ""
+      ).toLowerCase();
+
+      // SEARCH
       const matchesSearch =
-        deliveryBoy.name
-          ?.toLowerCase()
-          .includes(search.toLowerCase()) ||
-        deliveryBoy.email
-          ?.toLowerCase()
-          .includes(search.toLowerCase()) ||
-        deliveryBoy.phone?.includes(search);
+        !keyword ||
+        name.includes(keyword) ||
+        email.includes(keyword) ||
+        phone.includes(keyword) ||
+        vehicleNumber.includes(keyword);
 
-      const matchesStatus =
-        selectedStatus === "all"
-          ? true
-          : selectedStatus === "verified"
-            ? deliveryBoy.isVerified
-            : selectedStatus === "available"
-              ? deliveryBoy.isAvailable
-              : !deliveryBoy.isAvailable;
+      // FILTER
+      let matchesAvailability;
 
-      return matchesSearch && matchesStatus;
+switch (availability) {
+  case "Available":
+    matchesAvailability =
+      item.isAvailable === true;
+    break;
+
+  case "Unavailable":
+    matchesAvailability =
+      item.isAvailable === false;
+    break;
+
+  case "Verified":
+    matchesAvailability =
+      item.isVerified === true;
+    break;
+
+  case "Unverified":
+    matchesAvailability =
+      item.isVerified !== true;
+    break;
+
+  default:
+    matchesAvailability = true;
+    break;
+}
+      return (
+        matchesSearch &&
+        matchesAvailability
+      );
     });
-  }, [deliveryBoys, search, selectedStatus]);
+  }, [
+    deliveryBoys,
+    search,
+    availability,
+  ]);
+
+  // ==========================================
+  // DELIVERY STATISTICS
+  // ==========================================
 
   const stats = useMemo(() => {
     return {
       total: deliveryBoys.length,
 
       verified: deliveryBoys.filter(
-        (item) => item.isVerified
+        (item) => item.isVerified === true
       ).length,
 
       available: deliveryBoys.filter(
-        (item) => item.isAvailable
+        (item) => item.isAvailable === true
       ).length,
 
       unavailable: deliveryBoys.filter(
-        (item) => !item.isAvailable
+        (item) => item.isAvailable !== true
       ).length,
     };
   }, [deliveryBoys]);
 
-  const handleRefresh = () => {
-    dispatch(getDeliveryBoys());
-  };
-  const handleExport = () => {
-    console.log("Export Delivery Data");
-  };
-  const handleAdd = () => {
-    setEditingDeliveryBoy(null);
-    setShowForm(true);
-  };
-
-  const handleEdit = (deliveryBoy) => {
-    setEditingDeliveryBoy(deliveryBoy);
-    setShowForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setEditingDeliveryBoy(null);
-    setShowForm(false);
-  };
+  // ==========================================
+  // UI
+  // ==========================================
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
 
-      {/* ================= Header ================= */}
+      {/* ======================================
+          DELIVERY HEADER
+      ====================================== */}
 
-      <section className="rounded-3xl border border-slate-200 bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 p-8 shadow-lg">
+      <DeliveryHeader
+        stats={stats}
+        onAdd={handleAdd}
+      />
 
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      {/* ======================================
+          ERROR MESSAGE
+      ====================================== */}
 
-          <div>
-
-            <span className="inline-flex rounded-full bg-white/20 px-4 py-1 text-sm font-medium text-white backdrop-blur">
-              GreenBasket Admin
-            </span>
-
-            <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
-              Delivery Management
-            </h1>
-
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50">
-              Manage delivery partners, monitor verification,
-              availability, assignments and live operations
-              from one dashboard.
-            </p>
-
-          </div>
-
-          <button
-            onClick={handleAdd}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-white px-6 font-semibold text-emerald-700 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-          >
-            <Plus size={20} />
-            Add Delivery Boy
-          </button>
-
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
+          {error}
         </div>
+      )}
 
-      </section>
+      {/* ======================================
+          SUCCESS MESSAGE
+      ====================================== */}
 
-      {/* ================= Statistics ================= */}
-
-      <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-
-        <div className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm font-medium text-slate-500">
-                Total Delivery Boys
-              </p>
-
-              <h2 className="mt-3 text-4xl font-bold text-slate-800">
-                {stats.total}
-              </h2>
-
-            </div>
-
-            <div className="rounded-2xl bg-emerald-100 p-4">
-              <Users className="text-emerald-600" />
-            </div>
-
-          </div>
-
+      {message && !error && (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-700">
+          {message}
         </div>
+      )}
 
-        <div className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+      {/* ======================================
+          SEARCH + FILTER
+      ====================================== */}
 
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm font-medium text-slate-500">
-                Verified
-              </p>
-
-              <h2 className="mt-3 text-4xl font-bold text-blue-600">
-                {stats.verified}
-              </h2>
-
-            </div>
-
-            <div className="rounded-2xl bg-blue-100 p-4">
-              <ShieldCheck className="text-blue-600" />
-            </div>
-
-          </div>
-
-        </div>
-        <div className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm font-medium text-slate-500">
-                Available
-              </p>
-
-              <h2 className="mt-3 text-4xl font-bold text-emerald-600">
-                {stats.available}
-              </h2>
-
-            </div>
-
-            <div className="rounded-2xl bg-emerald-100 p-4">
-              <Truck className="text-emerald-600" />
-            </div>
-
-          </div>
-
-        </div>
-
-        <div className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-
-          <div className="flex items-center justify-between">
-
-            <div>
-
-              <p className="text-sm font-medium text-slate-500">
-                Offline
-              </p>
-
-              <h2 className="mt-3 text-4xl font-bold text-red-600">
-                {stats.unavailable}
-              </h2>
-
-            </div>
-
-            <div className="rounded-2xl bg-red-100 p-4">
-              <WifiOff className="text-red-600" />
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* ================= Search & Filter ================= */}
-      {/* 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-
-          {/* Search */}
-
-      {/* <div className="relative w-full lg:max-w-lg">
-
-            <Search
-              size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-
-            <input
-              type="text"
-              placeholder="Search by name, email or phone..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="h-12 w-full rounded-2xl border border-slate-300 bg-slate-50 pl-12 pr-4 text-sm outline-none transition-all duration-300 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
-            />
-
-          </div> */}
-
-      {/* Right Controls  */}
-
-      {/* <div className="flex flex-wrap items-center gap-3">
-
-            <select
-              value={selectedStatus}
-              onChange={(e) =>
-                setSelectedStatus(e.target.value)
-              }
-              className="h-12 rounded-2xl border border-slate-300 bg-white px-5 text-sm font-medium outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
-            >
-              <option value="all">All Delivery Boys</option>
-              <option value="verified">Verified</option>
-              <option value="available">Available</option>
-              <option value="offline">Offline</option>
-            </select>
-
-            <button
-              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-300 bg-white transition hover:bg-slate-100"
-            >
-              <Filter size={18} />
-            </button>
-
-            <button
-              onClick={handleRefresh}
-              className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-300 bg-white transition hover:bg-emerald-50 hover:text-emerald-600"
-            >
-              <RefreshCw
-                size={18}
-                className={loading ? "animate-spin" : ""}
-              />
-            </button>
-
-          </div> */}
-
-      {/* </div>
-
-      </section> */}
-
-      <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
         <DeliverySearch
-          search={search}
-          setSearch={setSearch}
-          loading={loading}
-          onRefresh={handleRefresh}
-          onExport={handleExport}
+          value={search}
+          onChange={setSearch}
         />
 
         <DeliveryFilters
-          value={selectedStatus}
-          onChange={setSelectedStatus}
+          value={availability}
+          onChange={setAvailability}
         />
 
       </div>
-      {/* ================= Delivery Table ================= */}
+
+      {/* ======================================
+          DELIVERY TABLE
+      ====================================== */}
 
       <DeliveryTable
-        deliveryBoys={filteredDeliveryBoys}
         loading={loading}
-        onView={(deliveryBoy) => {
-          console.log("View:", deliveryBoy);
-          // TODO: Open Details Modal
-        }}
+        deliveryBoys={filteredDeliveryBoys}
+
+        onView={handleView}
+
         onEdit={handleEdit}
-        onDelete={(deliveryBoy) => {
-          console.log("Delete:", deliveryBoy);
-          // TODO: Open Delete Confirmation Modal
-        }}
-        onVerify={(deliveryBoy) => {
-          console.log("Verify:", deliveryBoy);
-          // dispatch(verifyDeliveryBoy(deliveryBoy._id));
-        }}
-        onAssign={(deliveryBoy) => {
-          console.log("Assign:", deliveryBoy);
-          // TODO: Open Assign Order Modal
-        }}
-        onLocation={(deliveryBoy) => {
-          console.log("Location:", deliveryBoy);
-          // TODO: Open Live Location Modal
-        }}
-        onAvailabilityChange={(deliveryBoy) => {
-          console.log("Availability:", deliveryBoy);
-          // dispatch(toggleAvailability(deliveryBoy._id));
-        }}
+
+        onDelete={handleDelete}
+
+        onVerify={handleVerify}
+
+        onAssign={handleAssignOpen}
+
+        onLocation={handleLocation}
+
+        onAvailabilityChange={
+          handleAvailabilityChange
+        }
       />
 
-      {/* ================= Delivery Form Modal ================= */}
+      {/* ======================================
+          ADD / EDIT FORM
+      ====================================== */}
 
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <DeliveryForm
+        open={openForm}
+        onClose={handleCloseForm}
+        deliveryBoy={selectedDeliveryBoy}
+        loading={loading}
+        onSubmit={handleSubmit}
+      />
 
-          <div className="relative w-full max-w-6xl rounded-3xl bg-white shadow-2xl">
+      {/* ======================================
+          DETAILS MODAL
+      ====================================== */}
 
-            {/* Modal Header */}
+      <DeliveryDetailsModal
+        open={detailsOpen}
+        onClose={handleCloseDetails}
+        deliveryBoy={
+          deliveryBoy || selectedDeliveryBoy
+        }
+      />
 
-            <div className="flex items-center justify-between border-b border-slate-200 px-8 py-6">
+      {/* ======================================
+          DELETE MODAL
+      ====================================== */}
 
-              <div>
+      <DeleteDeliveryModal
+        open={deleteOpen}
+        onClose={handleCloseDelete}
+        loading={loading}
+        deliveryBoy={selectedDeliveryBoy}
+        onDelete={confirmDelete}
+      />
 
-                <h2 className="text-2xl font-bold text-slate-800">
-                  {editingDeliveryBoy
-                    ? "Update Delivery Partner"
-                    : "Register Delivery Partner"}
-                </h2>
+      {/* ======================================
+          ASSIGN ORDER MODAL
+      ====================================== */}
 
-                <p className="mt-1 text-sm text-slate-500">
-                  Fill all required information before saving.
-                </p>
+      <AssignOrderModal
+        open={assignOpen}
+        onClose={handleCloseAssign}
+        onAssign={handleAssign}
+        loading={loading}
+        deliveryBoys={deliveryBoys}
+        orders={orders}
+        deliveryBoy={selectedDeliveryBoy}
+      />
 
-              </div>
+      {/* ======================================
+          LIVE LOCATION MODAL
+      ====================================== */}
 
-              <button
-                onClick={handleCloseForm}
-                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium transition hover:bg-slate-100"
-              >
-                Close
-              </button>
-
-            </div>
-
-            {/* Modal Body */}
-
-            <div className="max-h-[85vh] overflow-y-auto p-8">
-
-              <DeliveryForm
-                deliveryBoy={editingDeliveryBoy}
-                loading={loading}
-                onClose={handleCloseForm}
-                onSubmit={async (data) => {
-                  try {
-                    if (editingDeliveryBoy) {
-                      await dispatch(
-                        updateDeliveryBoy({
-                          id: editingDeliveryBoy._id,
-                          formData: data,
-                        })
-                      );
-                    } else {
-                      await dispatch(registerDeliveryBoy(data));
-                    }
-
-                    dispatch(getDeliveryBoys());
-
-                    handleCloseForm();
-                  } catch (error) {
-                    console.error(error);
-                  }
-                }}
-              />
-
-            </div>
-
-          </div>
-
-        </div>
-      )}
+      <DeliveryLocationModal
+        open={locationOpen}
+        onClose={handleCloseLocation}
+        deliveryBoy={selectedDeliveryBoy}
+        location={currentLocation}
+        onLoadLocation={loadLocation}
+      />
 
     </div>
   );

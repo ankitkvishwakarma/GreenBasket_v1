@@ -1,26 +1,28 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import deliveryService from "./deliveryService";
 
-/* ===========================================
-   Get All Delivery Boys
-=========================================== */
+// ==========================================
+// GET ALL DELIVERY BOYS
+// ==========================================
 
 export const getDeliveryBoys = createAsyncThunk(
   "delivery/getDeliveryBoys",
-  async (_, thunkAPI) => {
+  async (params = {}, thunkAPI) => {
     try {
-      return await deliveryService.getDeliveryBoys();
+      return await deliveryService.getDeliveryBoys(params);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch delivery boys"
       );
     }
   }
 );
 
-/* ===========================================
-   Get Delivery Boy By Id
-=========================================== */
+// ==========================================
+// GET DELIVERY BOY BY ID
+// ==========================================
 
 export const getDeliveryBoyById = createAsyncThunk(
   "delivery/getDeliveryBoyById",
@@ -29,126 +31,162 @@ export const getDeliveryBoyById = createAsyncThunk(
       return await deliveryService.getDeliveryBoyById(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch delivery boy"
       );
     }
   }
 );
 
-/* ===========================================
-   Register Delivery Boy
-=========================================== */
+// ==========================================
+// REGISTER DELIVERY BOY
+// ==========================================
 
 export const registerDeliveryBoy = createAsyncThunk(
   "delivery/registerDeliveryBoy",
   async (formData, thunkAPI) => {
     try {
-      return await deliveryService.registerDeliveryBoy(formData);
+      return await deliveryService.registerDeliveryBoy(
+        formData
+      );
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to register delivery boy"
       );
     }
   }
 );
 
-/* ===========================================
-   Update Delivery Boy
-=========================================== */
+// ==========================================
+// UPDATE DELIVERY BOY
+// ==========================================
 
 export const updateDeliveryBoy = createAsyncThunk(
   "delivery/updateDeliveryBoy",
   async ({ id, formData }, thunkAPI) => {
     try {
-      return await deliveryService.updateDeliveryBoy(id, formData);
+      return await deliveryService.updateDeliveryBoy(
+        id,
+        formData
+      );
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update delivery boy"
       );
     }
   }
 );
 
-/* ===========================================
-   Delete Delivery Boy
-=========================================== */
-
-export const deleteDeliveryBoy = createAsyncThunk(
-  "delivery/deleteDeliveryBoy",
-  async (id, thunkAPI) => {
-    try {
-      return await deliveryService.deleteDeliveryBoy(id);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
-      );
-    }
-  }
-);
-
-/* ===========================================
-   Verify Delivery Boy
-=========================================== */
+// ==========================================
+// VERIFY DELIVERY BOY
+// ==========================================
 
 export const verifyDeliveryBoy = createAsyncThunk(
   "delivery/verifyDeliveryBoy",
   async (id, thunkAPI) => {
     try {
-      return await deliveryService.verifyDeliveryBoy(id);
+      return await deliveryService.verifyDeliveryBoy(
+        id
+      );
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to verify delivery boy"
       );
     }
   }
 );
 
-/* ===========================================
-   Update Availability
-=========================================== */
+// ==========================================
+// UPDATE AVAILABILITY
+// ==========================================
 
 export const updateAvailability = createAsyncThunk(
   "delivery/updateAvailability",
   async ({ id, isAvailable }, thunkAPI) => {
     try {
-      return await deliveryService.toggleAvailability(id, isAvailable);
+      return await deliveryService.updateAvailability({
+        id,
+        isAvailable,
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update availability"
       );
     }
   }
 );
 
-/* ===========================================
-   Assign Delivery Boy
-=========================================== */
+// ==========================================
+// DELETE DELIVERY BOY
+// ==========================================
+
+export const deleteDeliveryBoy = createAsyncThunk(
+  "delivery/deleteDeliveryBoy",
+  async (id, thunkAPI) => {
+    try {
+      await deliveryService.deleteDeliveryBoy(id);
+
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to delete delivery boy"
+      );
+    }
+  }
+);
+
+// ==========================================
+// ASSIGN DELIVERY BOY
+// ==========================================
 
 export const assignDeliveryBoy = createAsyncThunk(
   "delivery/assignDeliveryBoy",
-  async (payload, thunkAPI) => {
+  async (
+    { orderId, deliveryBoyId },
+    thunkAPI
+  ) => {
     try {
-      return await deliveryService.assignOrder(payload);
+      return await deliveryService.assignDeliveryBoy({
+        orderId,
+        deliveryBoyId,
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to assign delivery boy"
       );
     }
   }
 );
 
-/* ===========================================
-   Get Delivery Location
-=========================================== */
+// ==========================================
+// GET DELIVERY LOCATION
+// ==========================================
 
 export const getDeliveryLocation = createAsyncThunk(
   "delivery/getDeliveryLocation",
   async (id, thunkAPI) => {
     try {
-      return await deliveryService.getLiveLocation(id);
+      return await deliveryService.getDeliveryLocation(
+        id
+      );
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch delivery location"
       );
     }
   }

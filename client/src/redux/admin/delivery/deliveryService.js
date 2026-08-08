@@ -1,70 +1,121 @@
 import api from "@/services/axios";
 
 const deliveryService = {
-  // Get All Delivery Boys
-  getDeliveryBoys: async () => {
-    const { data } = await api.get("/delivery");
+  // ==========================================
+  // GET ALL DELIVERY BOYS
+  // GET /api/delivery
+  // ==========================================
+  getDeliveryBoys: async (params = {}) => {
+    const { data } = await api.get("/delivery", {
+      params,
+    });
+
     return data;
   },
 
-  // Get Single Delivery Boy
+  // ==========================================
+  // GET DELIVERY BOY BY ID
+  // GET /api/delivery/:id
+  // ==========================================
   getDeliveryBoyById: async (id) => {
     const { data } = await api.get(`/delivery/${id}`);
+
     return data;
   },
 
-  // Register Delivery Boy
- registerDeliveryBoy: async (payload) => {
-  const { data } = await api.post(
-    "/delivery/register",
-    payload
-  );
-
-  return data;
-},
-
-  // Update Delivery Boy
-  updateDeliveryBoy: async (id, payload) => {
-    const { data } = await api.put(`/delivery/${id}`, payload);
-    return data;
-  },
-
-  // Delete Delivery Boy
-  deleteDeliveryBoy: async (id) => {
-    const { data } = await api.delete(`/delivery/${id}`);
-    return data;
-  },
-
-  // Verify Delivery Boy
-  verifyDeliveryBoy: async (id) => {
-    const { data } = await api.patch(
-      `/delivery/${id}/verify`
-    );
-    return data;
-  },
-
-  // Toggle Availability
-  toggleAvailability: async (id) => {
-    const { data } = await api.patch(
-      `/delivery/${id}/availability`
-    );
-    return data;
-  },
-
-  // Assign Order
-  assignOrder: async (payload) => {
+  // ==========================================
+  // REGISTER DELIVERY BOY
+  // POST /api/delivery/register
+  // ==========================================
+  registerDeliveryBoy: async (formData) => {
     const { data } = await api.post(
-      "/delivery/assign-order",
-      payload
+      "/delivery/register",
+      formData
     );
+
     return data;
   },
 
-  // Live Location
-  getLiveLocation: async (id) => {
-    const { data } = await api.get(
-      `/delivery/${id}/location`
+  // ==========================================
+  // UPDATE DELIVERY BOY
+  // PUT /api/delivery/:id
+  // ==========================================
+  updateDeliveryBoy: async (id, formData) => {
+    const { data } = await api.put(
+      `/delivery/${id}`,
+      formData
     );
+
+    return data;
+  },
+
+  // ==========================================
+  // VERIFY DELIVERY BOY
+  // PUT /api/delivery/verify/:id
+  // ==========================================
+  verifyDeliveryBoy: async (id) => {
+    const { data } = await api.put(
+      `/delivery/verify/${id}`
+    );
+
+    return data;
+  },
+
+  // ==========================================
+  // UPDATE AVAILABILITY
+  // PUT /api/delivery/availability/:id
+  // ==========================================
+  updateAvailability: async ({ id, isAvailable }) => {
+    const { data } = await api.put(
+      `/delivery/availability/${id}`,
+      {
+        isAvailable,
+      }
+    );
+
+    return data;
+  },
+
+  // ==========================================
+  // DELETE DELIVERY BOY
+  // DELETE /api/delivery/:id
+  // ==========================================
+  deleteDeliveryBoy: async (id) => {
+    const { data } = await api.delete(
+      `/delivery/${id}`
+    );
+
+    return data;
+  },
+
+  // ==========================================
+  // ASSIGN DELIVERY BOY TO ORDER
+  // PUT /api/delivery/assign
+  // ==========================================
+  assignDeliveryBoy: async ({
+    orderId,
+    deliveryBoyId,
+  }) => {
+    const { data } = await api.put(
+      "/delivery/assign",
+      {
+        orderId,
+        deliveryBoyId,
+      }
+    );
+
+    return data;
+  },
+
+  // ==========================================
+  // GET DELIVERY BOY LOCATION
+  // GET /api/delivery/location/:id
+  // ==========================================
+  getDeliveryLocation: async (id) => {
+    const { data } = await api.get(
+      `/delivery/location/${id}`
+    );
+
     return data;
   },
 };

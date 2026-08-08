@@ -7,6 +7,7 @@ import {
   Grid2x2,
   BadgePercent,
   Phone,
+  ChevronRight,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
@@ -15,7 +16,7 @@ import { useSelector } from "react-redux";
 import SearchBar from "./SearchBar";
 import WishlistButton from "./WishlistButton";
 import CartButton from "./CartButton";
-import NotificationButton from "./NotificationButton";
+// import NotificationButton from "./NotificationButton";
 import ThemeToggle from "./ThemeToggle";
 
 const menuItems = [
@@ -52,258 +53,315 @@ const MobileMenu = ({ open, setOpen }) => {
   );
 
   return (
-    <>
-      {/* Menu Button */}
+    <div className="relative lg:hidden">
+      {/* ================= Hamburger Button ================= */}
 
       <motion.button
-        whileHover={{ y: -2, scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setOpen(true)}
+        whileHover={{
+          scale: 1.05,
+        }}
+        whileTap={{
+          scale: 0.95,
+        }}
+        onClick={() => setOpen(!open)}
         className="
           flex
-          h-10
-          w-10
+          h-11
+          w-11
           items-center
           justify-center
           rounded-xl
           border
           border-gray-200
-          bg-white/80
-          backdrop-blur-xl
-          shadow-sm
+          bg-white
+          text-gray-800
+          shadow-lg
           transition-all
           duration-300
           hover:border-green-500
-          hover:bg-green-50
-          hover:shadow-lg
-          lg:hidden
-          dark:border-neutral-700
-          dark:bg-neutral-900
+          hover:bg-white
+          hover:shadow-xl
+          active:scale-95
+          dark:bg-white
+          dark:text-gray-900
+          dark:border-gray-200
         "
       >
-        <Menu size={20} />
+        {open ? <X size={20} /> : <Menu size={20} />}
       </motion.button>
+
+      {/* ================= Dropdown ================= */}
 
       <AnimatePresence>
         {open && (
-          <>
-            {/* Backdrop */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: -15,
+              scale: 0.96,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: -15,
+              scale: 0.96,
+            }}
+            transition={{
+              duration: 0.25,
+            }}
+            className="
+              absolute
+              right-0
+              top-14
+              z-[999]
+              w-[340px]
+              max-w-[92vw]
+              overflow-hidden
+              rounded-3xl
+              border
+              border-gray-200
+              bg-white
+              shadow-[0_20px_60px_rgba(0,0,0,0.18)]
+              dark:border-neutral-800
+              dark:bg-neutral-950
+            "
+          >
+                        {/* ================= Header ================= */}
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-            />
+            <div className="border-b border-gray-100 bg-white dark:border-neutral-800 dark:bg-neutral-950">
 
-            {/* Drawer */}
-
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{
-                type: "spring",
-                stiffness: 280,
-                damping: 28,
-              }}
-              className="
-                fixed
-                right-0
-                top-0
-                z-50
-                flex
-                h-screen
-                w-[340px]
-                max-w-[90vw]
-                flex-col
-                overflow-hidden
-                border-l
-                border-gray-200
-                bg-white/95
-                backdrop-blur-xl
-                shadow-[0_20px_80px_rgba(0,0,0,.20)]
-                dark:border-neutral-800
-                dark:bg-neutral-950
-              "
-            >
-              {/* Header */}
-
-              <div className="flex items-center justify-between border-b border-gray-100 p-5 dark:border-neutral-800">
+              <div className="flex items-center justify-between px-5 py-5">
 
                 <div>
                   <h2 className="text-xl font-bold text-green-600">
                     GreenBasket
                   </h2>
 
-                  <p className="text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Fresh Grocery Delivered
                   </p>
                 </div>
 
                 <motion.button
-                  whileHover={{ rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{
+                    rotate: 90,
+                  }}
+                  whileTap={{
+                    scale: 0.9,
+                  }}
                   onClick={() => setOpen(false)}
-                  className="rounded-xl p-2 transition hover:bg-gray-100 dark:hover:bg-neutral-800"
+                  className="
+                    flex
+                    h-10
+                    w-10
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-gray-100
+                    text-gray-700
+                    transition-all
+                    duration-300
+                    hover:bg-red-50
+                    hover:text-red-500
+                    dark:bg-neutral-800
+                    dark:text-gray-200
+                  "
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </motion.button>
 
               </div>
 
               {/* Search */}
 
-              <div className="border-b border-gray-100 p-5 dark:border-neutral-800">
+              <div className="px-4 pb-4">
                 <SearchBar />
               </div>
 
-              {/* Navigation */}
+            </div>
 
-              <nav className="flex flex-1 flex-col gap-2 p-4">
-                                {menuItems.map((item) => {
-                  const Icon = item.icon;
+            {/* ================= Navigation ================= */}
 
-                  return (
-                    <motion.div
-                      key={item.title}
-                      whileHover={{ x: 6 }}
-                      whileTap={{ scale: 0.98 }}
+            <nav
+              className="
+                max-h-[420px]
+                overflow-y-auto
+                px-4
+                py-4
+                space-y-2
+              "
+            >
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <motion.div
+                    key={item.title}
+                    whileHover={{
+                      x: 5,
+                    }}
+                    whileTap={{
+                      scale: 0.98,
+                    }}
+                  >
+                    <Link
+                      to={item.path}
+                      onClick={() => setOpen(false)}
+                      className="
+                        group
+                        flex
+                        items-center
+                        gap-4
+                        rounded-2xl
+                        p-3
+                        transition-all
+                        duration-300
+                        hover:bg-green-50
+                        dark:hover:bg-neutral-800
+                      "
                     >
-                      <Link
-                        to={item.path}
-                        onClick={() => setOpen(false)}
+                      <div
                         className="
-                          group
                           flex
+                          h-11
+                          w-11
                           items-center
-                          gap-4
-                          rounded-2xl
-                          p-3
+                          justify-center
+                          rounded-xl
+                          bg-green-100
+                          text-green-600
                           transition-all
                           duration-300
-                          hover:bg-green-50
-                          dark:hover:bg-neutral-800
+                          group-hover:bg-green-600
+                          group-hover:text-white
+                          dark:bg-neutral-800
                         "
                       >
-                        <div
+                        <Icon size={20} />
+                      </div>
+
+                      <div className="flex flex-1 items-center justify-between">
+
+                        <div>
+                          <h4 className="font-semibold text-gray-800 dark:text-gray-100">
+                            {item.title}
+                          </h4>
+
+                          <p className="text-xs text-gray-400">
+                            Explore {item.title}
+                          </p>
+                        </div>
+
+                        <ChevronRight
+                          size={18}
                           className="
-                            flex
-                            h-11
-                            w-11
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-green-100
-                            text-green-600
+                            text-gray-300
                             transition-all
                             duration-300
-                            group-hover:bg-green-600
-                            group-hover:text-white
-                            dark:bg-neutral-800
+                            group-hover:translate-x-1
+                            group-hover:text-green-600
                           "
-                        >
-                          <Icon size={20} />
-                        </div>
+                        />
 
-                        <div className="flex flex-1 items-center justify-between">
-                          <span className="font-medium text-gray-700 dark:text-gray-200">
-                            {item.title}
-                          </span>
+                      </div>
 
-                          <span className="text-gray-300 transition-all group-hover:translate-x-1 group-hover:text-green-600">
-                            →
-                          </span>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </nav>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </nav>
+                        {/* ================= Bottom ================= */}
 
-              {/* Bottom */}
-                            <div className="border-t border-gray-100 p-5 dark:border-neutral-800">
+            <div className="border-t border-gray-100 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
 
-                {/* Quick Actions */}
+              {/* Quick Actions */}
 
-                <div className="mb-5 flex items-center justify-center gap-3">
+             <div className="mb-5 flex items-center justify-center gap-3">
 
-                  <CartButton count={4} />
+                 <CartButton count={4} />
 
-                  {isAuthenticated && (
-                    <>
-                      <WishlistButton count={2} />
-                      <NotificationButton count={3} />
-                    </>
-                  )}
+                    {isAuthenticated && (
+                     <WishlistButton count={2} />
+                       )}
 
-                  <ThemeToggle />
-
-                </div>
-
-                {/* Login / Profile */}
-
-                {isAuthenticated ? (
-                  <Link
-                    to="/profile"
-                    onClick={() => setOpen(false)}
-                    className="
-                      flex
-                      h-11
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-gradient-to-r
-                      from-green-600
-                      to-emerald-500
-                      font-semibold
-                      text-white
-                      shadow-lg
-                      transition-all
-                      duration-300
-                      hover:scale-[1.02]
-                      hover:from-green-700
-                      hover:to-emerald-600
-                    "
-                  >
-                    My Profile
-                  </Link>
-                ) : (
-                  <Link
-                    to="/login"
-                    onClick={() => setOpen(false)}
-                    className="
-                      flex
-                      h-11
-                      items-center
-                      justify-center
-                      rounded-xl
-                      bg-gradient-to-r
-                      from-green-600
-                      to-emerald-500
-                      font-semibold
-                      text-white
-                      shadow-lg
-                      transition-all
-                      duration-300
-                      hover:scale-[1.02]
-                      hover:from-green-700
-                      hover:to-emerald-600
-                    "
-                  >
-                    Login
-                  </Link>
-                )}
+                   <ThemeToggle />
 
               </div>
 
-            </motion.div>
-          </>
+                
+
+              {/* Login / Profile */}
+
+              {isAuthenticated ? (
+                <Link
+                  to="/profile"
+                  onClick={() => setOpen(false)}
+                  className="
+                    flex
+                    h-12
+                    w-full
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    bg-gradient-to-r
+                    from-green-600
+                    to-emerald-500
+                    font-semibold
+                    text-white
+                    shadow-lg
+                    transition-all
+                    duration-300
+                    hover:-translate-y-0.5
+                    hover:shadow-xl
+                  "
+                >
+                  My Profile
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="
+                    flex
+                    h-12
+                    w-full
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    bg-gradient-to-r
+                    from-green-600
+                    to-emerald-500
+                    font-semibold
+                    text-white
+                    shadow-lg
+                    transition-all
+                    duration-300
+                    hover:-translate-y-0.5
+                    hover:shadow-xl
+                  "
+                >
+                  Login
+                </Link>
+              )}
+
+              {/* Footer */}
+
+              <div className="mt-5 border-t border-gray-100 pt-4 dark:border-neutral-800">
+                <p className="text-center text-xs text-gray-400">
+                  GreenBasket © 2026
+                </p>
+              </div>
+
+            </div>
+
+          </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 };
 
